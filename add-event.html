@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Planner</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <ul>
+            <li><a href="#"><img src="" alt="logo"></a>
+            </li>
+        </ul>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="./add-event.html">Event Planner</a></li>
+                <li><a href="./event-list.html">Events</a></li>
+            </ul>
+        </nav>
+
+        <ul>
+            <li><a href="#"><img src="#" alt="Notification"></a></li>
+            <li><img src="" alt="theme change"></li>
+        </ul>
+    </header>
+
+    <!-- main section -->
+    <main id="add-event-page">
+        <section id="add-event-section">
+            <div class="add-event-container">
+                    <form action="#">
+                        <div class="add-event-form form-left">
+                            <!-- Form Header -->
+                            <div class="form-header">
+                            <img src="./img/add-event.png" alt="+" class="input-title-img">
+                            <h2 class="card-title">New Event</h2>
+                            </div>
+                        
+                            <div class="form-field">
+                                <label for="event-name">Event Name</label>
+                                <input type="text" name="event-name" 
+                                id="event-name"
+                                placeholder="Enter Event Name">
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="event-date">Date</label>
+                                    <input type="date"
+                                     id="event-date"
+                                     name="event-date">
+                                </div>
+    
+                                <div class="form-field">
+                                    <label for="event-time">Time</label>
+                                    <input type="time"
+                                     id="event-time"
+                                     name="event-time">
+                                </div>
+                            </div>
+    
+                            <div class="form-field">
+                                <label for="event-location">Location</label>
+                                <input type="text" id="event-location" name="event-location"
+                                placeholder="Enter location">
+                            </div>
+    
+                            <div class="form-field">
+                                <label for="event-desrcp">Description</label>
+                                <textarea name="event-desrcp" 
+                                id="event-desrcp"
+                                placeholder="Enter event description"></textarea>
+                            </div>        
+                        </div>
+
+                        <div class="add-event-form form-right">
+
+                            <div class="form-header">
+                                <img src="./img/recurrent.png" alt="recurrence" class="input-title-img">
+                                <h3 for="event-recur">Recurring Event</h3>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+    
+                            <div class="radio-field">
+                                <div class="radio-item">
+                                    <input type="radio" id="daily" name="recurrence" value="daily">
+                                    <label for="daily">Daily</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="weekly" name="recurrence" value="weekly">
+                                    <label for="weekly">Weekly</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="monthly" name="recurrence" value="monthly">
+                                    <label for="monthly">Monthly</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="custom" name="recurrence" value="custom">
+                                    <label for="custom">Custom</label>
+                                </div>
+                            </div>
+    
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="event-repeat-date">Repeat Until</label>
+                                    <input type="date" 
+                                    id="event-repeat-date"
+                                    name="repeat-until">
+                                </div>
+                                <div class="form-field">
+                                    <label for="event-frequency ">Frequency</label>
+                                    <select name="event-frequency" id="event-frequency">
+                                        <option value="">Select...</option>
+                                        <option value="1">Every time</option>
+                                        <option value="2">Every 2nd time</option>
+                                        <option value="3">Every 3rd time</option>
+                                        <option value="4">Every 4th time</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="event-category">Category</label>
+                                <select id="event-category" name="event-category">
+                                    <option value="">Select a category</option>
+                                    <option value="conference">Conference</option>
+                                    <option value="workshop">Workshop</option>
+                                    <option value="seminar">Seminar</option>
+                                    <option value="webinar">Webinar</option>
+                                    <option value="meetup">Meetup</option>
+                                    <option value="meetup">Party</option>
+                                    <option value="meetup">Other</option>
+                                    <!-- Add more categories as needed -->
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="event-file">Upload Files</label>
+                                <div class="file-upload">
+                                    <input type="file" name="event-file" id="event-file" multiple>
+                                    <p>Drag and drop files here or click to select</p>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </form>            
+                <div class="btn-container">
+                    <button type="submit" class="form-btn primary-btn">Create Event</button>
+                    <button type="reset" class="form-btn secondary-btn">Clear Form</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="event-filter-section">
+            <div class="event-filter">
+                <div class="container">
+                    <div class="search-section">
+                      <!-- Search Bar -->
+                      <div class="search-bar">
+                        <i>🔍</i>
+                        <input type="text" placeholder="Search events by name or description...">
+                      </div>
+                
+                      <!-- Filters -->
+                      <div class="filters">
+                        <div class="filter-group">
+                          <label>Start Date</label>
+                          <input type="date">
+                        </div>
+                
+                        <div class="filter-group">
+                          <label>End Date</label>
+                          <input type="date">
+                        </div>
+                
+                        <div class="filter-group">
+                          <label>Location</label>
+                          <input type="text" placeholder="Enter location">
+                        </div>
+                
+                        <div class="filter-group">
+                          <label>Category</label>
+                          <select>
+                            <option value="">All Categories</option>
+                            <option>Music</option>
+                            <option>Technology</option>
+                            <option>Sports</option>
+                            <option>Arts</option>
+                            <option>Business</option>
+                          </select>
+                        </div>
+                
+                        <div class="filter-group">
+                          <label>Status</label>
+                          <select>
+                            <option value="">All Statuses</option>
+                            <option>Upcoming</option>
+                            <option>In Progress</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                          </select>
+                        </div>
+                
+                        <button class="clear-filters">Clear Filters</button>
+                      </div>
+                    </div>
+            </div>
+        </section>
+
+        <section id="latest-added-events">
+            <h2>Newly Added Events</h2> <div class="added-event-container" id="event-container">
+      
+            </div>
+
+            <button><a style="color: black;" href="./event-list.html">More</a></button>
+                
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>Made with &#10084;&#65039; by Harsh &nbsp;</p>
+    </footer>
+
+    <script src="./script/script.js"></script>
+</body>
+</html>
