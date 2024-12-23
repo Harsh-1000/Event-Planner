@@ -1,89 +1,82 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    list-style-type: none;
+    list-style-type: none
 }
 
-body{
-    background-color: lightblue;
-    color: black;
+body {
+    background-color: #add8e6
 }
 
-/* Header Section */
 header {
     display: flex;
     justify-content: space-between;
-    background-color: #000000;
+    background-color: #000;
     align-items: center;
     padding: 16px;
     width: 100%;
     position: sticky;
     top: 0;
     margin-bottom: 20px;
-    color: #F5F5F5;
-    z-index: 10;  
+    color: #f5f5f5;
+    z-index: 10
 }
 
-a
-{
-    color: white;
-    text-decoration: none;
+a {
+    color: #fff;
+    text-decoration: none
 }
-.logo{width: 40px;}
 
-header ul{
+.logo {
+    width: 40px
+}
+
+header ul {
     font-size: 18px;
     display: flex;
-    gap:20px;
+    gap: 20px
 }
 
-h1,h2{
-    color: #000000;
+body,h1,h2 {
+    color: #000
 }
-/*-------------------------------------------------------------------------------------------------------------------------------------------------- End of Header------------------------- */
-
-
-/*------------------------------------------------------- main section ----------------------------------------*/
 
 main {
     max-width: 95%;
     margin: 20px auto;
     font-size: 18px;
-    font-family: 'Arial', sans-serif; 
-    color: #333;
+    font-family: "Arial",sans-serif;
+    color: #333
 }
 
-/* Event Planner Section */
 #event-planner-section {
-    background-color: yellowgreen;
+    background-color: #9acd32;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    padding: 30px
 }
 
 .intro {
-    text-align: center;
+    text-align: center
 }
 
 .intro h1 {
     font-size: 2.4rem;
-    font-weight: bold;
+    font-weight: 700;
     color: #1a73e8;
     margin-bottom: 15px;
-    text-transform: uppercase;
+    text-transform: uppercase
 }
-/*------------------------show event-------------------------------------------------------*/
 
-/* Show Event */
 #latest-added-events {
     margin-top: 20px;
     display: grid;
     place-items: center;
     padding: 20px;
-    background-color: lightyellow;
+    background-color: #ffffe0;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,.1)
 }
 
 #latest-added-events h2 {
@@ -91,14 +84,14 @@ main {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: .5px
 }
 
 .added-event-container {
     width: 100%;
     display: grid;
-    place-items: center;
+    place-items: center
 }
 
 .event-card {
@@ -106,69 +99,67 @@ main {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background: #ffffff; 
-    box-shadow: 0 4px 12px rgba(173, 255, 47, 0.3), 0 6px 20px rgba(173, 255, 47, 0.2); 
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(173,255,47,.3),0 6px 20px rgba(173,255,47,.2);
     border-radius: 12px;
-    padding: 20px; 
+    padding: 20px;
     width: 100%;
     margin: 16px 0;
     height: fit-content;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    transition: transform .3s ease,box-shadow .3s ease
 }
 
 .event-card:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 6px 15px rgba(173, 255, 47, 0.4), 0 8px 30px rgba(173, 255, 47, 0.3); 
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(173,255,47,.4),0 8px 30px rgba(173,255,47,.3)
 }
 
 .event-title {
     font-size: 20px;
-    font-weight: bold;
-    color: #333333;
+    font-weight: 700;
+    color: #333;
     margin-bottom: 8px;
-    white-space: normal;
+    white-space: normal
 }
 
 .event-details {
     margin-left: 0;
-    width: 100%;
+    width: 100%
 }
 
 .event-description {
     font-size: 14px;
     color: #555;
-    margin-bottom: 20px;
-    font-style: italic;
+    margin-bottom: 10px;
+    font-style: italic
 }
-.event-location,.event-date
-{
+
+.event-date,.event-location {
     font-size: 16px;
+    margin-bottom: 10px
 }
 
 .event-countdown {
-    background-color: lightblue;
+    background-color: #add8e6;
     padding: 15px;
     border-radius: 8px;
     font-size: 14px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 20px
 }
 
 .event-countdown .time-remaining {
     color: #333;
-    font-weight: bold;
+    font-weight: 700
 }
 
 .event-countdown span {
     font-size: 18px;
-    margin-right: 5px;
+    margin-right: 5px
 }
 
-.event-countdown .days,
-.event-countdown .hours,
-.event-countdown .minutes,
-.event-countdown .seconds {
-    color: #007bff;
+.event-countdown .days,.event-countdown .hours,.event-countdown .minutes,.event-countdown .seconds {
+    color: #007bff
 }
 
 .event-actions {
@@ -177,303 +168,289 @@ main {
     right: 10px;
     display: flex;
     gap: 8px;
-    z-index: 1;
+    z-index: 1
 }
 
 .action-btn {
     cursor: pointer;
     padding: 8px 12px;
     border-radius: 5px;
-    color: white;
+    color: #fff;
     font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: background-color .3s ease,transform .2s ease,box-shadow .3s ease
 }
 
 .action-btn:hover {
-    opacity: 0.8;
+    opacity: .8
 }
 
 .event-actions .edit-btn {
-    background: linear-gradient(135deg, #4caf50, #66bb6a);
-    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
-    border-radius: 12px;
+    background: linear-gradient(135deg,#4caf50,#66bb6a);
+    box-shadow: 0 4px 6px rgba(76,175,80,.2);
+    border-radius: 12px
 }
 
 .event-actions .edit-btn:hover {
-    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    background: linear-gradient(135deg,#66bb6a,#4caf50);
     transform: scale(1.05);
-    box-shadow: 0 6px 8px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 6px 8px rgba(76,175,80,.4)
 }
 
 .event-actions .delete-btn {
-    background: linear-gradient(135deg, #f44336, #ef5350);
-    box-shadow: 0 4px 6px rgba(244, 67, 54, 0.2);
-    border-radius: 12px;
+    background: linear-gradient(135deg,#f44336,#ef5350);
+    box-shadow: 0 4px 6px rgba(244,67,54,.2);
+    border-radius: 12px
 }
 
 .event-actions .delete-btn:hover {
-    background: linear-gradient(135deg, #ef5350, #f44336);
+    background: linear-gradient(135deg,#ef5350,#f44336);
     transform: scale(1.05);
-    box-shadow: 0 6px 8px rgba(244, 67, 54, 0.4);
+    box-shadow: 0 6px 8px rgba(244,67,54,.4)
 }
 
-/*--------------------------------------------------form section styling-------------------------------------------------- */
-.add-event-container,#event-filter-section
-{
-    background-color: whitesmoke;
+#event-filter-section,.add-event-container {
+    background-color: #f5f5f5;
     padding: 10px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
     width: 100%;
-    margin: 40px auto;
+    margin: 40px auto
 }
 
-.form-container
-{
+.form-container {
     width: 100%;
     height: 100%;
     display: flex;
-    padding: 10px;
+    padding: 10px
 }
 
-.add-event-form{
+.add-event-form {
     width: 50%;
-    padding: 20px;
+    padding: 20px
 }
 
-.form-header
-{
+.form-header {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
     padding: 8px;
-    gap: 20px;
+    gap: 20px
 }
 
-.input-title-img
-{
+.input-title-img {
     width: 30px;
-    height: 30px;
+    height: 30px
 }
 
-.form-grid
-{
+.form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 24px
 }
 
 .form-field {
-    margin-bottom: 16px;
+    margin-bottom: 16px
 }
 
 .form-field label {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 500
 }
 
-input, select, textarea {
+input,select,textarea {
     width: 100%;
-    padding: 12px 12px;
+    padding: 12px;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 14px
 }
 
 textarea {
     min-height: 100px;
-    resize: vertical;
+    resize: vertical
 }
 
 .recurring-section {
     margin-top: 24px;
     padding-top: 24px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e0e0
 }
 
 .recurring-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 16px
 }
 
 .recurring-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px
 }
 
-/* slider */
 .switch {
     position: relative;
     display: inline-block;
     width: 50px;
-    height: 24px;
-  }
-  
-  .switch input { 
+    height: 24px
+}
+
+.switch input {
     opacity: 0;
     width: 0;
-    height: 0;
-  }
-  
-  .slider {
+    height: 0
+}
+
+.slider,.slider:before {
     position: absolute;
+    transition: .4s
+}
+
+.slider {
     cursor: pointer;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
+    background-color: #ccc
+}
+
+.slider:before {
     content: "";
     height: 16px;
     width: 16px;
     left: 4px;
     bottom: 4px;
-    background-color: white;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    background-color: #2196F3;
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-  }
-  
-  input:checked + .slider:before {
+    background-color: #fff
+}
+
+input:checked+.slider {
+    background-color: #2196f3
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196f3
+}
+
+input:checked+.slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
+    transform: translateX(26px)
+}
 
-/* Radio Group */
+.slider.round {
+    border-radius: 34px
+}
+
+.slider.round:before {
+    border-radius: 50%
+}
+
 .radio-field {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 16px
 }
 
 .radio-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px
 }
 
-.radio-item input[type="radio"] {
+.radio-item input[type=radio] {
     width: 16px;
-    height: 16px;
+    height: 16px
 }
 
 .radio-item label {
     margin: 0;
-    font-weight: normal;
+    font-weight: 400
 }
 
-/* Buttons */
 .btn-container {
     display: flex;
     width: 100%;
     background-color: #333;
     justify-content: center;
     gap: 16px;
-    padding: 10px;
+    padding: 10px
 }
 
-.form-btn  {
+.form-btn {
     flex-basis: 20%;
     padding: 10px;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 1px solid transparent
 }
 
 .primary-btn {
-    background-color: #2196F3;
-    color: white;
+    background-color: #2196f3;
+    color: #fff
 }
 
 .secondary-btn {
     background-color: red;
-    color: white;
+    color: #fff
 }
 
-.btn-container{
-    opacity: 0.9;
+.btn-container {
+    opacity: .9
 }
-
-/* ------------------------------------------------------------------------------------------------------------- */
-/* Search Filter */
-/* Event Filter Section */
-
+/*-------------------------------------- Filter Section---------------------------------------------------------- */
 #event-filter-section h2 {
     text-align: center;
     font-size: 28px;
-    font-weight: bold;
+    font-weight: 700;
     color: #333;
-    margin-bottom: 30px;
+    margin-bottom: 30px
 }
 
 #event-filter-section h2 span {
     font-size: 30px;
-    margin: 0 10px;
+    margin: 0 10px
+}
+
+.container,.search-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
+    align-items: flex-start
 }
 
 .search-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    gap: 20px
+}
+
+.search-bar,.search-bar input {
     width: 100%;
+    border-radius: 8px;
+    padding: 8px 12px
 }
 
 .search-bar {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
     background-color: #fff;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    width: 100%;
-    position: relative;
+    position: relative
 }
 
 .search-bar input {
-    border: none;
-    outline: none;
-    padding: 8px 12px;
+    border: 0;
+    outline: 0;
     font-size: 14px;
-    color: #333;
-    width: 100%;
-    border-radius: 8px;
-    padding-left: 12px; 
+    color: #333
 }
 
 .search-bar svg {
@@ -481,114 +458,105 @@ textarea {
     height: 20px;
     fill: #007bff;
     position: absolute;
-    right: 12px; 
-    cursor: pointer;
+    right: 12px;
+    cursor: pointer
 }
 
 .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
     gap: 20px;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 20px
 }
 
 .filter-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: column
 }
 
 .filter-group label {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 6px;
+    margin-bottom: 6px
 }
 
-.filter-group input,
-.filter-group select {
+.filter-group input,.filter-group select,.sort-group select {
     padding: 10px;
     font-size: 14px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
-    outline: none;
+    outline: 0
 }
 
 .sort-field {
-    display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 100%;
-    margin-top: 20px;
+    margin-top: 20px
 }
 
-.sort-field label {
-    font-weight: bold;
-    color: #333;
+.filter-group label,.sort-field label {
+    font-weight: 700;
+    color: #333
 }
 
-.sort-group {
+.sort-field,.sort-group {
     display: flex;
     gap: 20px;
-    width: 100%;
+    width: 100%
 }
 
-.sort-group select {
-    padding: 10px;
-    font-size: 14px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    outline: none;
-}
-
-/* Clear Filters Button */
 .clear-filters {
     background-color: #ff5722;
-    color: white;
+    color: #fff;
     padding: 12px 24px;
     font-size: 16px;
-    border: none;
+    border: 0;
     border-radius: 8px;
     cursor: pointer;
     width: 100%;
     max-width: 200px;
-    transition: background-color 0.3s ease;
+    transition: background-color .3s ease;
     margin-top: 20px;
     display: block;
-    text-align: center;
+    text-align: center
 }
 
 .clear-filters:hover {
-    background-color: #e64a19;
+    background-color: #e64a19
 }
-/* --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
-/* Footer Section */
-footer{
-    background-color: #000000;
-    color: #F5F5F5;
+
+/*------------------------------------- footer section-------------------------------------- */
+footer {
+    background-color: #000;
+    color: #f5f5f5;
     padding: 20px;
     display: grid;
-    place-items: center;
+    place-items: center
 }
 
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    header ul li { padding: 2px;}
-    header ul {display: block;}
-    .intro h1 {
-        font-size: 1.8rem; 
+/* media query */
+@media screen and (max-width:768px) {
+    header ul li {
+        padding: 2px
     }
 
-    .home-btn
-    {
-        flex-direction: column;
+    header ul {
+        display: block
     }
+
+    .intro h1 {
+        font-size: 1.8rem
+    }
+
+    .home-btn {
+        flex-direction: column
+    }
+
     .event-card {
         width: 100%;
-        margin: 20px 0;
+        margin: 20px 0
     }
 
     .event-title {
-        font-size: 18px;
+        font-size: 18px
     }
 
     .event-actions {
@@ -596,62 +564,56 @@ footer{
         flex-direction: row;
         justify-content: space-between;
         margin-top: 8px;
-        width: 100%;
+        width: 100%
     }
 
     .event-actions .action-btn {
         width: 48%;
-        padding: 10px;
+        padding: 10px
     }
 
     .search-section {
         flex-direction: column;
-        align-items: center;
+        align-items: center
     }
 
     .filters {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr
     }
 
-    .sort-field {
+    .sort-field,.sort-group {
         flex-direction: column;
-        gap: 10px;
-    }
-
-    .sort-group {
-        flex-direction: column;
-        gap: 10px;
+        gap: 10px
     }
 
     .clear-filters {
-        width: 100%;
-    }
-    .form-container
-    {
-        display: block;
+        width: 100%
     }
 
-    .add-event-form{
+    .form-container {
+        display: block
+    }
+
+    .add-event-form {
         width: 100%;
         padding: 2px;
-        flex-wrap: wrap;
+        flex-wrap: wrap
     }
 
-    .form-grid
-    {
-        display: block;
+    .form-grid {
+        display: block
     }
-    .form-field
-    {
+
+    .form-field {
         margin-top: 12px;
-        padding: 2px;
-    }
-    .form-left
-    {
-        border-right: none;
+        padding: 2px
     }
 
-    .form-btn  {
-        flex-basis:content;
+    .form-left {
+        border-right: none
+    }
+
+    .form-btn {
+        flex-basis: content
     }
 }

@@ -1,5 +1,20 @@
+/**
+ * Event constructor function.
+ * 
+ * @param {string} eventName - The name of the event.
+ * @param {string} eventDate - The date of the event.
+ * @param {string} eventTime - The time of the event.
+ * @param {string} eventLocation - The location of the event.
+ * @param {string} eventDescription - A description of the event.
+ * @param {boolean} eventRecurring - Whether the event is recurring.
+ * @param {string} recurrenceType - The type of recurrence.
+ * @param {string} repeatUntil - The end date for a recurring event.
+ * @param {string} frequency - The frequency of recurrence.
+ * @param {string} category - The category of the event.
+ */
 function Event(eventName, eventDate, eventTime,eventLocation, eventDescription, eventRecurring, recurrenceType, repeatUntil, frequency, category) 
 {
+    this.eventId = Date.now() + Math.floor(Math.random() * 1000);
     this.eventName = eventName || '';
     this.eventDate = eventDate || ''; 
     this.eventTime = eventTime || ''; 
@@ -19,89 +34,208 @@ function Event(eventName, eventDate, eventTime,eventLocation, eventDescription, 
     };
 }
 
+/**
+ * The form element used to create event.
+ */
 const form = document.getElementById('event-form');
+
+/**
+ * An array that stores all events.
+ * @type {Array.<Event>}
+ */
 var events = [];
-var openFormId = null; 
+
+/**
+ * Holds the ID of the form that is currently open for editing. 
+ */
+var openFormId = null;
+
+/**
+ * A clone of the event which is updated.
+ */
+var cloneNode = null;
+
+/**
+ * The checkbox element for toggling whether the event is recurring or not.
+ */
 const recurrenceCheckbox = document.getElementById('recurrence-checkbox');
+
+/**
+ * The element that holds the options for recurring events.
+ */
 const recurrenceOptions = document.getElementById('recurrence-options');
+
+/**
+ * The container for the "repeat until" input field, visible only if the event is recurring.
+ */
 const repeatUntilContainer = document.getElementById('repeat-until-container');
+
+/**
+ * The form element that contains all the input fields for creating events.
+ */
 const eventForm = document.getElementById('event-form');
+
+/**
+ * element for choosing the frequency of a recurring event.
+ */
 const frequencySelect = document.getElementById('event-frequency');
 
+/**
+ * Initializes event-related functionalities when the page is loaded.
+ * This function is executed when the window's load event is triggered.
+ */
 window.onload = ()=>{
     events = getStoredEvents();
     showEvents();
-    // checkUpcomingEvents();
+    checkUpcomingEvents();
     disableRecurrenceFields();
     frequencySelect.disabled = true; 
 }
 
+/**
+ * Event listener for the `beforeunload` event, which is triggered before the window or tab is closed or reloaded.
+ * This listener saves all events to local storage to persist them before the page is unloaded. 
+ */
 window.addEventListener('beforeunload', () => {
     saveEventsToLocalStorage(events);
 })
 
+/**
+ * Adds an event listener to the search input field, which triggers the `showEvents` function whenever the user types something in the search bar.
+ * This allows for dynamic filtering of events as the user types.
+ */
 document.querySelector('.search-bar input').addEventListener('input', showEvents);
-document.querySelector('.filter-group input[type=date]').addEventListener('change', showEvents);
-document.getElementById('filter-category').addEventListener('change', showEvents);
-document.getElementById('sort-criteria').addEventListener('change', showEvents);
-document.getElementById('sort-order').addEventListener('change', showEvents);
-document.getElementById('filter-status').addEventListener('change',showEvents);
-document.querySelector('.clear-filters').addEventListener('click',clearFilter);
-recurrenceOptions.addEventListener('change', enableFrequencyField);
-setInterval(checkUpcomingEvents, 1* 1000); 
 
+/**
+ * Adds an event listener to the date field, which triggers the `showEvents` function whenever the user types something in the search bar.
+ * This allows for dynamic filtering of events as the user types.
+ */
+document.querySelector('.filter-group input[type=date]').addEventListener('change', showEvents);
+
+/**
+ * Adds an event listener to the category filter dropdown, which triggers the `showEvents` function whenever the user selects a different category.
+ * This allows for dynamic filtering of events as the user types. 
+ */
+document.getElementById('filter-category').addEventListener('change', showEvents);
+
+/**
+ * Adds an event listener to the sort criteria dropdown, which triggers the `showEvents` function whenever the user selects a different sorting criterion.
+ */
+document.getElementById('sort-criteria').addEventListener('change', showEvents);
+
+/**
+ * Adds an event listener to the sort order dropdown, which triggers the `showEvents` function whenever the user selects a different sort order.
+ */
+document.getElementById('sort-order').addEventListener('change', showEvents);
+
+/**
+ * Adds an event listener to the status filter dropdown, which triggers the `showEvents` function whenever the user selects a different status.
+ */
+document.getElementById('filter-status').addEventListener('change', showEvents);
+
+/**
+ * Adds an event listener to the clear filters button, which triggers the `clearFilter` function when clicked.
+ */
+document.querySelector('.clear-filters').addEventListener('click', clearFilter);
+
+/**
+ * Adds an event listener to the recurrence options, which triggers the `enableFrequencyField` function when the user selects recurrence options.
+ */
+recurrenceOptions.addEventListener('change', enableFrequencyField);
+
+/**
+ * Sets up a periodic check every second (1000 milliseconds) to call the `checkUpcomingEvents` function.
+ * This ensures that any upcoming events are checked continuously, and  notifications can be triggered accordingly.
+ */
+setInterval(checkUpcomingEvents, 1 * 1000);
+
+/**
+ * Retrieves the stored events from localStorage.
+ * @returns {Array.<Event>} 
+ */
 function getStoredEvents() {
     const events = localStorage.getItem('events');
     return events ? JSON.parse(events) : [];
 }
 
+/**
+ * Saves the provided array of event objects to localStorage
+ * @param {Array.<Event>} events - An array of event objects
+ */
 function saveEventsToLocalStorage(events) {
     localStorage.setItem('events', JSON.stringify(events));
 }
 
+/**
+ * Disables the recurrence-related input fields in the event form.
+ */
 function disableRecurrenceFields() {
     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.disabled = true;
     });
-    repeatUntilContainer.querySelectorAll('input').forEach(input => {
-        input.disabled = true;
-    });
+    document.getElementById('event-repeat-date').disabled = true;
 }
 
+/**
+ * Enables the recurrence-related input fields in the event form.
+ */
 function enableRecurrenceFields() {
     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.disabled = false;
     });
-    repeatUntilContainer.querySelectorAll('input').forEach(input => {
-        input.disabled = false;
-    });
+    document.getElementById('event-repeat-date').disabled = false;
 }
 
+/**
+ * Enables or disables the frequency selection field based on the custom recurrence option.
+ * If the "custom" radio button is checked, the frequency selection dropdown is enabled.
+ * Otherwise, it is disabled.
+ */
 function enableFrequencyField() {
     if (document.getElementById('custom').checked) {
         frequencySelect.disabled = false; 
-        frequencySelect.disabled = true; 
+    }
+    else
+    {
+         frequencySelect.disabled = true; 
     }
 }
 
+/**
+ * Event listener for the "change" event on the recurrence checkbox.
+ * This function is triggered when the user checks or unchecks the recurrence checkbox.
+ * 
+ * - If the checkbox is checked, the recurrence fields are enabled
+ * - If the checkbox is unchecked, the recurrence fields are disabled 
+ */
 recurrenceCheckbox.addEventListener('change', function () {
     if (this.checked) {
         enableRecurrenceFields();
     } else {
         disableRecurrenceFields();
-        frequencySelect.disabled = true; 
         recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.checked = false;
         });
-        repeatUntilContainer.querySelector('input[type="date"]').value = ''; 
+        document.getElementById('event-repeat-date').value = '';
     }
 });
 
+/**
+ * Event listener for the form submission.
+ * This function prevents the default form submission behavior and triggers
+ * the `addNewEvent` function to add a new event to the list.
+ */
 form.addEventListener('submit',(e)=>{
     e.preventDefault();
     addNewEvent();
 });
 
+/**
+ * Adds a new event to the list of events.
+ * This function collects form data, validates the input, and creates either a single event
+ * or multiple recurring events based on the user's input. After adding the events,
+ * it saves them to localStorage and resets the form.
+ */
 function addNewEvent()
 {
     const formData = new FormData(form);
@@ -116,7 +250,7 @@ function addNewEvent()
     const eventLocation = formData.get('event-location');
     const eventDescription = formData.get('event-desrcp');
     const isRecurring = formData.get('is-recurrence') === 'on';
-    const recurrenceType = isRecurring ? (formData.get('recurrence') || null) : null;
+    const recurrenceType = isRecurring ? formData.get('recurrence')  : null;
     const repeatUntil = isRecurring ? formData.get('repeat-until') : null ;
     const frequency = isRecurring && recurrenceType === 'custom' ? formData.get('event-frequency') : '';
     const category = formData.get('event-category');
@@ -142,6 +276,23 @@ function addNewEvent()
     clearFilter();
 }
 
+/**
+ * Generates a list of recurring events based on the specified recurrence settings.
+ * 
+ * This function creates multiple event objects based on the recurrence pattern defined by the user.
+ * 
+ * @param {string} eventName - The name of the event.
+ * @param {string} eventDate - The date of the event.
+ * @param {string} eventTime - The time of the event.
+ * @param {string} eventLocation - The location of the event.
+ * @param {string} eventDescription - A description of the event.
+ * @param {string} recurrenceType - The type of recurrence.
+ * @param {string} repeatUntil - The end date for a recurring event.
+ * @param {string} frequency - The frequency of recurrence.
+ * @param {string} category - The category of the event.
+ * 
+ * @returns {Array} An array of Event objects 
+ */
 function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category) {
     const recurringEvents = [];
     console.log("creating reocuuring event");
@@ -172,6 +323,14 @@ function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, ev
     return recurringEvents;
 }
 
+/**
+ * Validates the form data before adding a new event.
+ * 
+ * This function checks that all required fields are filled out correctly in the form.
+ * @param {FormData} formData - The FormData object containing the form's input values.
+ * 
+ * @returns {boolean}
+ */
 function validateForm(formData) {
 
     const eventDate = formData.get("event-date");
@@ -236,17 +395,20 @@ function validateForm(formData) {
     return true;
 }
 
+/**
+ * Displays the list of events in the event container.
+ */
 function showEvents()
 {
     container = document.getElementById('event-container');
     container.innerHTML = '';
     
     let filteredEvents = getFilterEvents();
-    filteredEvents.forEach((event,i) => {
+    filteredEvents.forEach((event) => {
 
         const eventCard = document.createElement('div');
         eventCard.classList.add('event-card');
-        eventCard.id = `event-card-${i}`;
+        eventCard.id = `event-card-${event.eventId}`;
         
         const eventDetails = document.createElement('div');
         eventDetails.classList.add('event-details');
@@ -260,14 +422,14 @@ function showEvents()
         eventDetails.innerHTML = `
             <h3 class="event-title">${event.eventName}</h3>
             <p class="event-date">${formattedDate} ${formattedTime}</p>
-            <p class="event-location"><i>${event.eventLocation}</i></p>
-            <p class="event-description">${event.eventDescription}</p>
+            <p class="event-location"><strong>${event.eventLocation}</strong></p>
+            <p class="event-description"><strong>description: </strong>${event.eventDescription}</p>
             <p class="event-description"><strong>category: </strong>${event.category}</p>
-            <p class="event-description"><strong>status: </strong><span class=" event-status">${event.status}</span></p>
+            <p class="event-description"><strong>status: </strong><span class="event-status">${event.status}</span></p>
             
             <div class="event-countdown">
                 <div class="time-remaining">
-                  ⏳ <span class="days">0</span> days
+                  &#x1F552; <span class="days">0</span> days
                   <span class="hours">0</span> hrs
                   <span class="minutes">0</span> min
                   <span class="seconds">0</span> sec
@@ -278,8 +440,8 @@ function showEvents()
         const actions = document.createElement('div');
         actions.classList.add('event-actions');
         actions.innerHTML = `
-            <button class="edit-btn action-btn"   onclick="openUpdateEventForm(${i})">✏️</button>
-            <button class="delete-btn action-btn" onclick="deleteEvent(${i})">🗑️</button>
+            <button class="edit-btn action-btn"   onclick="openUpdateEventForm(${event.eventId})">✏️</button>
+            <button class="delete-btn action-btn" onclick="deleteEvent(${event.eventId})">🗑️</button>
         `;
         
         eventCard.appendChild(eventDetails);
@@ -290,6 +452,13 @@ function showEvents()
     });
 }
 
+/**
+ * Converts a 24-hour time string to a 12-hour time format with AM/PM.
+ * 
+ * @param {string} time 
+ * 
+ * @returns {string} 
+ */
 function convertTo12HourFormat(time) {
     const [hours, minutes] = time.split(':');
     const date = new Date();
@@ -300,10 +469,19 @@ function convertTo12HourFormat(time) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
+/**
+ * Starts a countdown timer for an event and updates the event's status when the event time is reached.
+ * 
+ * This function calculates the remaining time until the event and updates the countdown every second. 
+ * 
+ * @param {Object} event
+ * @param {HTMLElement} eventCard
+ */
 function startCountdown(event, eventCard) {
     const countdownElement = eventCard.querySelector('.time-remaining');
     const eventStatusElement = eventCard.querySelector('.event-status');
-
+    eventStatusElement.innerHTML = "upcoming";
+    event.status = "upcoming";
     const eventDate = new Date(event.eventDate + " " + event.eventTime);  
     const eventTimestamp = eventDate.getTime();  
     
@@ -330,24 +508,35 @@ function startCountdown(event, eventCard) {
     }, 1000); 
 }
 
-function deleteEvent(i)
+/**
+ * Deletes an event from the events list by its ID.
+ *
+ * @param {number} id - The unique id of the event to be deleted.
+ */
+function deleteEvent(id)
 {
-    events.splice(i,1);
+    const eventIndex = events.findIndex(event => event.eventId === id);
+    events.splice(eventIndex,1);
     saveEventsToLocalStorage(events);
     showEvents();
 }
 
+/**
+ * Create and returns a form to update the details of an existing event.
+ * The form is pre-populated with the current values of the event and includes options 
+ * @returns {HTMLElement} The form element that can be used for updating the event.
+ */
 function updateEventForm(i, event) {
   const formContainer = document.createElement('form');
   formContainer.id = `event-form-${i}`;
 
   formContainer.innerHTML = `
   <div class="add-event-container">
-      <div class="form-container">
+        <div class="form-container">
           <div class="add-event-form form-left">
               <div class="form-header">
                   <img src="./img/add-event.png" alt="+" class="input-title-img">
-                  <h2 class="card-title">New Event</h2>
+                  <h2 class="card-title">Update Event</h2>
               </div>
           
               <div class="form-field">
@@ -382,44 +571,46 @@ function updateEventForm(i, event) {
         <img src="./img/recurrent.png" alt="recurrence" class="input-title-img">
         <h3 for="event-recur-${i}">Recurring Event</h3>
         <label class="switch">
-            <input name="is-recurrence-${i}" type="checkbox" ${event.isRecurrence ? 'checked' : ''}>
+            <input id="is-recurrence-${i}" 
+            class ="recurrence-checkbox" disabled  name="is-recurrence-${i}" type="checkbox" ${event.isRecurrence ? 'checked' : ''}>
             <span class="slider round"></span>
         </label>
     </div>
 
     <div class="radio-field">
         <div class="radio-item">
-            <input type="radio" id="daily-${i}" name="recurrence-${i}" value="daily" ${event.recurrenceType === 'daily' ? 'checked' : ''}>
+            <input disabled type="radio" id="daily-${i}" name="recurrence-${i}" value="daily" ${event.recurrenceType === 'daily' ? 'checked' : ''}>
             <label for="daily-${i}">Daily</label>
         </div>
         <div class="radio-item">
-            <input type="radio" id="weekly-${i}" name="recurrence-${i}" value="weekly" ${event.recurrenceType === 'weekly' ? 'checked' : ''}>
+            <input disabled type="radio" id="weekly-${i}" name="recurrence-${i}" value="weekly" ${event.recurrenceType === 'weekly' ? 'checked' : ''}>
             <label for="weekly-${i}">Weekly</label>
         </div>
         <div class="radio-item">
-            <input type="radio" id="monthly-${i}" name="recurrence-${i}" value="monthly" ${event.recurrenceType === 'monthly' ? 'checked' : ''}>
+            <input disabled type="radio" id="monthly-${i}" name="recurrence-${i}" value="monthly" ${event.recurrenceType === 'monthly' ? 'checked' : ''}>
             <label for="monthly-${i}">Monthly</label>
         </div>
         <div class="radio-item">
-            <input type="radio" id="custom-${i}" name="recurrence-${i}" value="custom" ${event.recurrenceType === 'custom' ? 'checked' : ''}>
+            <input disabled type="radio" id="custom-${i}" name="recurrence-${i}" value="custom" ${event.recurrenceType === 'custom' ? 'checked' : ''}>
             <label for="custom-${i}">Custom</label>
         </div>
     </div>
 
-    <div class="form-grid">
-        <div class="form-field">
-            <label for="event-repeat-date-${i}">Repeat Until</label>
-            <input type="date" id="event-repeat-date-${i}" name="repeat-until-${i}" value="${event.repeatUntil}">
-        </div>
+    <div class="form-grid" id="repeat-until-container">
+      
         <div class="form-field">
             <label for="event-frequency-${i}">Frequency</label>
-            <select name="event-frequency-${i}" id="event-frequency-${i}">
+            <select name="event-frequency-${i}" id="event-frequency-${i}" disabled>
                 <option value="">Select...</option>
                 <option value="1" ${event.frequency === 1 ? 'selected' : ''}>Every time</option>
                 <option value="2" ${event.frequency === 2 ? 'selected' : ''}>Every 2nd time</option>
                 <option value="3" ${event.frequency === 3 ? 'selected' : ''}>Every 3rd time</option>
                 <option value="4" ${event.frequency === 4 ? 'selected' : ''}>Every 4th time</option>
             </select>
+        </div>
+          <div class="form-field">
+            <label for="event-repeat-date-${i}">Repeat Until</label>
+            <input type="date" id="event-repeat-date-${i}" disabled name="repeat-until-${i}" value="${event.repeatUntil}">
         </div>
     </div>
 
@@ -448,57 +639,73 @@ function updateEventForm(i, event) {
   return formContainer;
 }
 
-function openUpdateEventForm(i) {
+/**
+ * Opens the form to update an existing event by replacing the event card with the update form.
+ * If another form is already open, it closes the previous form.
+ * 
+ * @param {number} id - The ID of the event to be updated.
+ */
+function openUpdateEventForm(id) {
 
-    if (openFormId !== null) {
-        showEvents();
-    }
+  if (openFormId !== null) {
+    document.getElementById(`event-form-${openFormId}`).replaceWith(cloneNode);
+    cloneNode=null;
+    openFormId=null;
+  }
 
-  const event = events[i];
-  const formContainer = updateEventForm(i, event);
+  const event = events.find(event => event.eventId === id);
+  const formContainer = updateEventForm(id, event);
 
-  const eventCard = document.getElementById(`event-card-${i}`);
+  const eventCard = document.getElementById(`event-card-${id}`);
+  cloneNode = eventCard.cloneNode(true);
+
   eventCard.replaceWith(formContainer);
 
   console.log(formContainer);
-  
-
-  openFormId = i; 
+  openFormId = id; 
   console.log(openFormId);
 }
 
-function updateEvent(i)
+/**
+ * Updates an existing event with the new values from the event update form.
+ * The updated event information is saved to localStorage.
+ * @param {number} id - The ID of the event to be updated.
+ */
+function updateEvent(id)
 {
-    const updatedEvent = {
-        eventName: document.getElementById(`event-name-${i}`).value,
-        eventDate: document.getElementById(`event-date-${i}`).value,
-        eventTime: document.getElementById(`event-time-${i}`).value,
-        eventLocation: document.getElementById(`event-location-${i}`).value,
-        eventDescription: document.getElementById(`event-desrcp-${i}`).value,
-        eventRecurrence: document.querySelector(`input[name="recurrence-${i}"]:checked`)?.value,
-        category: document.getElementById(`event-category-${i}`).value,
-        isRecurring: document.querySelector(`input[name="is-recurrence-${i}"]`).checked,
-        recurrenceType: document.querySelector(`input[name="recurrence-${i}"]:checked`)?.value || null,
-        repeatUntil: document.querySelector(`input[name="is-recurrence-${i}"]`).checked
-            ? document.getElementById(`event-repeat-date-${i}`).value
-            : null,
-        frequency: document.querySelector(`input[name="is-recurrence-${i}"]`).checked
-            ? document.getElementById(`event-frequency-${i}`).value
-            : ''
-    };
+    const eventIndex = events.findIndex(event => event.eventId === id);
 
-    events[i] = updatedEvent;
+    const updatedEvent = {
+        eventName: document.getElementById(`event-name-${id}`).value,
+        eventDate: document.getElementById(`event-date-${id}`).value,
+        eventTime: document.getElementById(`event-time-${id}`).value,
+        eventLocation: document.getElementById(`event-location-${id}`).value,
+        eventDescription: document.getElementById(`event-desrcp-${id}`).value,
+        eventStatus:events[eventIndex].eventStatus,
+        category: document.getElementById(`event-category-${id}`).value,
+    };
+   
+    events[eventIndex] = updatedEvent;
     saveEventsToLocalStorage(events);
-    
     showEvents();
     openFormId = null;
 }
 
+/**
+ * Closes the current event update form and restores the previously displayed event card.
+ */
 function closeEvent()
 {
-    showEvents();
+    // showEvents();
+    document.getElementById(`event-form-${openFormId}`).replaceWith(cloneNode);
+    openFormId = null;
+    cloneNode=null;
 }
 
+/**
+ * Filters and sorts the events based on user inputs such as search text, date, category, status, and sort criteria.
+ * @returns {Array} - Returns a filtered and sorted array of event objects 
+ */
 function getFilterEvents() {
     const searchText = document.querySelector('.search-bar input').value.toLowerCase();
     const dateFilter = document.querySelector('.filter-group input[type=date]').value;
@@ -538,6 +745,9 @@ function getFilterEvents() {
     return filteredEvents;
 }
 
+/**
+ * Clears all the filters and resets the filter inputs to their default values.
+ */
 function clearFilter()
 {
     document.querySelector('.search-bar input').value = '';
@@ -549,6 +759,10 @@ function clearFilter()
     showEvents(); 
 }
 
+/**
+ * Checks the upcoming events and shows notifications at specific time intervals (15 minutes, 30 minutes, 1 hour, and when the event starts).
+ * 
+ */
 function checkUpcomingEvents() {
     const currentTime = new Date();
     events.forEach(event => {
@@ -591,6 +805,9 @@ function checkUpcomingEvents() {
     });
 }
 
+/**
+ * Displays a notification to the user about an upcoming event or when the event has started.
+ */
 function showNotification(event, timeLeft) {
     if(timeLeft==="Started :)")
     {
@@ -602,9 +819,12 @@ function showNotification(event, timeLeft) {
     } 
 }
 
+/**
+ * Exports the list of events to a CSV file.
+ */
 function exportEventsToCSV() {
    
-    const header = ['Event Name', 'Event Date', 'Event Time', 'Event Location', 'Event Description', 'Is Recurring', 'Recurrence Type', 'Repeat Until', 'Frequency', 'Category'];
+    const header = ['Event Name', 'Event Date', 'Event Time', 'Event Location', 'Event Description', 'Is Recurring', 'Recurrence Type', 'Repeat Until', 'Frequency', 'Category','Event Status'];
     
     const csvRows = [];
     
@@ -621,14 +841,14 @@ function exportEventsToCSV() {
             event.recurrenceType || '',
             event.repeatUntil || '',
             event.frequency || '',
-            event.category
+            event.category,
+            event.status
         ];
         csvRows.push(eventData.join(',')); 
     });
     
     const csvString = csvRows.join('\n');
     
-   
     const blob = new Blob([csvString], { type: 'text/csv' });  
    
     const link = document.createElement('a');

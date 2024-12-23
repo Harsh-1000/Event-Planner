@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Planner</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -23,59 +25,50 @@
     <!-- Main Section -->
     <main>
         <section id="event-planner-section">
-                <div class="intro">
-                    <h1>&#x1F389; Event Planner  &#x1F5D3;&#xFE0F;</h1>
-                </div>
+            <div class="intro">
+                <h1>&#x1F389; Event Planner &#x1F5D3;&#xFE0F;</h1>
+            </div>
         </section>
 
         <!-- Section To Add Event -->
         <section id="add-event-section">
-            <div class="add-event-container">                   
+            <div class="add-event-container">
                 <form id="event-form">
                     <div class="form-container">
                         <div class="add-event-form form-left">
                             <div class="form-header">
-                            <img src="./img/add-event.png" alt="+" class="input-title-img">
-                            <h2 class="card-title">New Event</h2>
+                                <img src="./img/add-event.png" alt="+" class="input-title-img">
+                                <h2 class="card-title" id="new-event">New Event</h2>
                             </div>
-                        
+
                             <div class="form-field">
                                 <label for="event-name">Event Name</label>
-                                <input type="text" name="event-name" 
-                                id="event-name" required
-                                placeholder="Enter Event Name">
+                                <input type="text" name="event-name" id="event-name" required
+                                    placeholder="Enter Event Name">
                             </div>
                             <div class="form-grid">
                                 <div class="form-field">
                                     <label for="event-date">Start Date</label>
-                                    <input type="date"
-                                    id="event-date"
-                                    required
-                                    name="event-date">
+                                    <input type="date" id="event-date" required name="event-date">
                                 </div>
 
                                 <div class="form-field">
                                     <label for="event-time">Start Time</label>
-                                    <input type="time"
-                                    id="event-time"
-                                    required
-                                    name="event-time">
+                                    <input type="time" id="event-time" required name="event-time">
                                 </div>
                             </div>
 
                             <div class="form-field">
                                 <label for="event-location">Location</label>
-                                <input type="text" id="event-location" name="event-location"
-                                required
-                                placeholder="Enter location">
+                                <input type="text" id="event-location" name="event-location" required
+                                    placeholder="Enter location">
                             </div>
 
                             <div class="form-field">
                                 <label for="event-desrcp">Description</label>
-                                <textarea name="event-desrcp" 
-                                id="event-desrcp" required
-                                placeholder="Enter event description"></textarea>
-                            </div>        
+                                <textarea name="event-desrcp" id="event-desrcp" required
+                                    placeholder="Enter event description"></textarea>
+                            </div>
                         </div>
                         <div class="add-event-form form-right">
 
@@ -87,7 +80,7 @@
                                     <span class="slider round"></span>
                                 </label>
                             </div>
-        
+
                             <div class="radio-field" id="recurrence-options">
                                 <div class="radio-item">
                                     <input type="radio" id="daily" name="recurrence" value="daily">
@@ -106,7 +99,7 @@
                                     <label for="custom">Custom</label>
                                 </div>
                             </div>
-        
+
                             <div class="form-grid" id="repeat-until-container">
                                 <div class="form-field">
                                     <label for="event-frequency">Frequency</label>
@@ -123,7 +116,7 @@
                                     <input type="date" id="event-repeat-date" name="repeat-until">
                                 </div>
                             </div>
-        
+
                             <div class="form-field">
                                 <label for="event-category">Category</label>
                                 <select id="event-category" name="event-category" required>
@@ -137,33 +130,38 @@
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-        
+
                         </div>
                     </div>
                     <div class="btn-container">
-                        <button type="submit" class="form-btn primary-btn" >Create Event</button>
+                        <button type="submit" class="form-btn primary-btn">Create Event</button>
                         <button type="reset" class="form-btn secondary-btn">Clear Form</button>
-                    </div>           
-                </form>                        
+                    </div>
+                </form>
             </div>
         </section>
 
         <!-- Section To Filter Event -->
         <section id="event-filter-section">
-            <h2><span role="img" aria-label="search">&#x1F50D;</span> Find Your Event <span role="img" aria-label="calendar">&#x1F4C5;</span></h2>
+            <h2><span role="img" aria-label="search">&#x1F50D;</span> Find Your Event <span role="img"
+                    aria-label="calendar">&#x1F4C5;</span></h2>
             <div class="event-filter event-planner">
                 <div class="container">
-                    <div class="search-section">                    
+                    <div class="search-section">
                         <div class="search-bar">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                <path
+                                    d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" />
+                            </svg>
                             <input type="text" placeholder="Search events by name, description, or location...">
-                        </div>        
+                        </div>
                         <div class="filters">
                             <div class="filter-group">
                                 <label for="filter-date">Date</label>
                                 <input type="date" id="filter-date">
                             </div>
-    
+
                             <div class="filter-group">
                                 <label for="filter-category">Category</label>
                                 <select id="filter-category">
@@ -186,8 +184,8 @@
                                     <option value="ongoing">Ongoing</option>
                                 </select>
                             </div>
-    
-                        </div>   
+
+                        </div>
                         <div class="sort-field">
                             <label>Sort By</label>
                             <div class="sort-group">
@@ -200,27 +198,29 @@
                                     <option value="desc">Descending</option>
                                 </select>
                             </div>
-                        </div>      
+                        </div>
                         <button class="clear-filters">Clear Filters</button>
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <!-- Section To Show Events -->
         <section id="latest-added-events">
-            <h2><span role="img" aria-label="celebration">&#x1F389;</span> Your Events <span role="img" aria-label="calendar">&#x1F4C5;</span></h2> 
-            
+            <h2><span role="img" aria-label="celebration">&#x1F389;</span> Your Events <span role="img"
+                    aria-label="calendar">&#x1F4C5;</span></h2>
+
             <div class="added-event-container" id="event-container">
             </div>
         </section>
     </main>
 
-     <!-- Footer Section -->
-     <footer>
+    <!-- Footer Section -->
+    <footer>
         <p>Made with &#10084;&#65039; by Harsh &nbsp;</p>
     </footer>
 
     <script src="./script/script.js"></script>
 </body>
+
 </html>
