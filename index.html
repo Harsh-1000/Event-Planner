@@ -16,8 +16,9 @@
 
         <ul>
             <li> <a href="#">Your Event Planner</a></li>
-            <li><a href="#"><img src="#" alt="Notification"></a></li>
-            <li><img src="" alt="theme change" id="theme-changed"></li>
+            <!-- <li><a href="#"><img src="#" alt="Notification"></a></li>
+            <li><img src="" alt="theme change" id="theme-changed"></li> -->
+            <li><a href="" id="export-event" onclick="exportEventsToCSV()">Export Events</a></li>
         </ul>
     </header>
 
@@ -41,7 +42,7 @@
                                 <div class="form-field">
                                     <label for="event-name">Event Name</label>
                                     <input type="text" name="event-name" 
-                                    id="event-name"
+                                    id="event-name" required
                                     placeholder="Enter Event Name">
                                 </div>
                                 <div class="form-grid">
@@ -49,6 +50,7 @@
                                         <label for="event-date">Date</label>
                                         <input type="date"
                                         id="event-date"
+                                        required
                                         name="event-date">
                                     </div>
     
@@ -56,6 +58,7 @@
                                         <label for="event-time">Time</label>
                                         <input type="time"
                                         id="event-time"
+                                        required
                                         name="event-time">
                                     </div>
                                 </div>
@@ -63,29 +66,30 @@
                                 <div class="form-field">
                                     <label for="event-location">Location</label>
                                     <input type="text" id="event-location" name="event-location"
+                                    required
                                     placeholder="Enter location">
                                 </div>
     
                                 <div class="form-field">
                                     <label for="event-desrcp">Description</label>
                                     <textarea name="event-desrcp" 
-                                    id="event-desrcp"
+                                    id="event-desrcp" required
                                     placeholder="Enter event description"></textarea>
                                 </div>        
                             </div>
-    
+
                             <div class="add-event-form form-right">
-    
+
                                 <div class="form-header">
                                     <img src="./img/recurrent.png" alt="recurrence" class="input-title-img">
                                     <h3 for="event-recur">Recurring Event</h3>
                                     <label class="switch">
-                                        <input name="is-recurrence" type="checkbox">
+                                        <input name="is-recurrence" type="checkbox" id="recurrence-checkbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </div>
-    
-                                <div class="radio-field">
+            
+                                <div class="radio-field" id="recurrence-options">
                                     <div class="radio-item">
                                         <input type="radio" id="daily" name="recurrence" value="daily">
                                         <label for="daily">Daily</label>
@@ -103,11 +107,11 @@
                                         <label for="custom">Custom</label>
                                     </div>
                                 </div>
-    
-                                <div class="form-grid">
+            
+                                <div class="form-grid" id="repeat-until-container">
                                     <div class="form-field">
-                                        <label for="event-frequency ">Frequency</label>
-                                        <select name="event-frequency" id="event-frequency">
+                                        <label for="event-frequency">Frequency</label>
+                                        <select name="event-frequency" id="event-frequency" disabled>
                                             <option value="">Select...</option>
                                             <option value="1">Every time</option>
                                             <option value="2">Every 2nd time</option>
@@ -117,16 +121,13 @@
                                     </div>
                                     <div class="form-field">
                                         <label for="event-repeat-date">Repeat Until</label>
-                                        <input type="date" 
-                                        id="event-repeat-date"
-                                        name="repeat-until">
+                                        <input type="date" id="event-repeat-date" name="repeat-until">
                                     </div>
-                                   
                                 </div>
-    
+            
                                 <div class="form-field">
                                     <label for="event-category">Category</label>
-                                    <select id="event-category" name="event-category">
+                                    <select id="event-category" name="event-category" required>
                                         <option value="">Select a category</option>
                                         <option value="conference">Conference</option>
                                         <option value="workshop">Workshop</option>
@@ -137,15 +138,9 @@
                                         <option value="other">Other</option>
                                     </select>
                                 </div>
-    
-                                <div class="form-field">
-                                    <label for="event-file"> Or Upload File </label>
-                                    <div class="file-upload">
-                                        <input type="file" name="event-file" id="event-file" multiple>
-                                    </div>
-                                </div>
-    
+            
                             </div>
+                        </div>
                         </div>
                         <div class="btn-container">
                             <button type="submit" class="form-btn primary-btn" >Create Event</button>

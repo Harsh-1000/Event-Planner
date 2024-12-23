@@ -57,21 +57,12 @@ form.addEventListener('submit',(e)=>{
 
 function addNewEvent()
 {
-    const fileInput = document.getElementById('event-file');
-    const file = fileInput.files[0];
-
-    if(file) {
-        exportEvents(file);
-        form.reset();
-        return;
-    }
-
     const formData = new FormData(form);
 
     if(!validateForm(formData)){
         return;
     }
-
+    
     const eventName = formData.get('event-name');
     const eventDate = formData.get('event-date');
     const eventTime = formData.get('event-time');
@@ -112,9 +103,6 @@ function getAllRecurringEvents(eventName, eventDate, eventTime, eventLocation, e
     console.log(currentDate);
     console.log(currentDate <= endDate);
     
-    
-    
-
     while (currentDate <= endDate) {
         console.log("new event created");
         
@@ -138,8 +126,62 @@ function getAllRecurringEvents(eventName, eventDate, eventTime, eventLocation, e
     return recurringEvents;
 }
 
-function validateForm(formData)
-{
+function validateForm(formData) {
+    
+    const eventName = formData.get("event-name");
+    if (!eventName || eventName.trim() === "") {
+        alert("Event Name is required.");
+        return false;
+    }
+
+    const eventDate = formData.get("event-date");
+    if (!eventDate) {
+        alert("Event Date is required.");
+        return false;
+    }
+
+    
+    const eventTime = formData.get("event-time");
+    if (!eventTime) {
+        alert("Event Time is required.");
+        return false;
+    }
+
+
+    const eventLocation = formData.get("event-location");
+    if (!eventLocation || eventLocation.trim() === "") {
+        alert("Event Location is required.");
+        return false;
+    }
+
+    const eventDescription = formData.get("event-desrcp");
+    if (!eventDescription || eventDescription.trim() === "") {
+        alert("Event Description is required.");
+        return false;
+    }
+
+    const recurrenceCheckbox = formData.get("is-recurrence");
+    if (recurrenceCheckbox === "on") { 
+        const recurrenceType = formData.get("recurrence");
+        if (!recurrenceType) {
+            alert("Please select a recurrence type (Daily, Weekly, Monthly, or Custom).");
+            return false;
+        }
+
+        if (recurrenceType === "custom") {
+            const frequency = formData.get("event-frequency");
+            if (!frequency || frequency === "") {
+                alert("Please select a frequency for custom recurrence.");
+                return false;
+            }
+        }
+        const repeatUntil = formData.get("repeat-until");
+        if (!repeatUntil) {
+            alert("Please select a Repeat Until date.");
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -415,7 +457,6 @@ function filterEvents() {
     const sortCriteria = document.getElementById('sort-criteria').value;
     const sortOrder = document.getElementById('sort-order').value;
 
-    // Filter events based on search text, dates, and category
     let filteredEvents = events.filter(event => {
         const eventDate = new Date(event.eventDate);
         const eventNameMatch = event.eventName.toLowerCase().includes(searchText);
@@ -427,7 +468,6 @@ function filterEvents() {
         return (eventNameMatch || eventDescriptionMatch || eventLocationMatch) && dateMatch && categoryMatch;
     });
 
-    // Sort the filtered events based on selected criteria
     filteredEvents.sort((a, b) => {
         if (sortCriteria === 'date') {
             return sortOrder === 'asc' 
@@ -441,7 +481,6 @@ function filterEvents() {
         return 0;
     });
 
-    // Call showEvents with filtered and sorted events
     showEvents(filteredEvents);
 }
 
@@ -539,5 +578,87 @@ function showNotification(event, timeLeft) {
 }
 
 
+function exportEventsToCSV() {
+   
+    const header = ['Event Name', 'Event Date', 'Event Time', 'Event Location', 'Event Description', 'Is Recurring', 'Recurrence Type', 'Repeat Until', 'Frequency', 'Category'];
+    
+    const csvRows = [];
+    
+    csvRows.push(header.join(','));
+    
+    events.forEach(event => {
+        const eventData = [
+            event.eventName,
+            event.eventDate,
+            event.eventTime,
+            event.eventLocation,
+            event.eventDescription,
+            event.isRecurring, 
+            event.recurrenceType || '',
+            event.repeatUntil || '',
+            event.frequency || '',
+            event.category
+        ];
+        csvRows.push(eventData.join(',')); 
+    });
+    
+    const csvString = csvRows.join('\n');
+    
+   
+    const blob = new Blob([csvString], { type: 'text/csv' });  
+   
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'events.csv'; 
+    link.click(); 
+}
 
+ const recurrenceCheckbox = document.getElementById('recurrence-checkbox');
+ const recurrenceOptions = document.getElementById('recurrence-options');
+ const repeatUntilContainer = document.getElementById('repeat-until-container');
+ const eventForm = document.getElementById('event-form');
+ const frequencySelect = document.getElementById('event-frequency');
+ 
+ 
+ disableRecurrenceFields();
+ frequencySelect.disabled = true; 
 
+ function disableRecurrenceFields() {
+     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+         radio.disabled = true;
+     });
+     repeatUntilContainer.querySelectorAll('input').forEach(input => {
+         input.disabled = true;
+     });
+ }
+
+ function enableRecurrenceFields() {
+     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+         radio.disabled = false;
+     });
+     repeatUntilContainer.querySelectorAll('input').forEach(input => {
+         input.disabled = false;
+     });
+ }
+
+ function enableFrequencyField() {
+     if (document.getElementById('custom').checked) {
+         frequencySelect.disabled = false; 
+         frequencySelect.disabled = true; 
+     }
+ }
+
+ recurrenceCheckbox.addEventListener('change', function () {
+     if (this.checked) {
+         enableRecurrenceFields();
+     } else {
+         disableRecurrenceFields();
+         frequencySelect.disabled = true; 
+         recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+             radio.checked = false;
+         });
+         repeatUntilContainer.querySelector('input[type="date"]').value = ''; 
+     }
+ });
+
+  recurrenceOptions.addEventListener('change', enableFrequencyField);
