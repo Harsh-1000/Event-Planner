@@ -1,4 +1,4 @@
-function Event(eventName, eventDate, eventTime, eventLocation, eventDescription, eventRecurring, recurrenceType, repeatUntil, frequency, category) 
+function Event(eventName, eventDate, eventTime,eventLocation, eventDescription, eventRecurring, recurrenceType, repeatUntil, frequency, category) 
 {
     this.eventName = eventName || '';
     this.eventDate = eventDate || ''; 
@@ -10,8 +10,9 @@ function Event(eventName, eventDate, eventTime, eventLocation, eventDescription,
     this.repeatUntil = repeatUntil || ''; 
     this.frequency = frequency || ''; 
     this.category = category || ''; 
+    this.status = "upcoming";
     this.hasShown = {
-        "5 minutes left": false,
+        "15 minutes left": false,
         "30 minutes left": false,
         "1 hour left": false,
         "Started :)": false
@@ -21,11 +22,18 @@ function Event(eventName, eventDate, eventTime, eventLocation, eventDescription,
 const form = document.getElementById('event-form');
 var events = [];
 var openFormId = null; 
+const recurrenceCheckbox = document.getElementById('recurrence-checkbox');
+const recurrenceOptions = document.getElementById('recurrence-options');
+const repeatUntilContainer = document.getElementById('repeat-until-container');
+const eventForm = document.getElementById('event-form');
+const frequencySelect = document.getElementById('event-frequency');
 
 window.onload = ()=>{
     events = getStoredEvents();
     showEvents();
-    checkUpcomingEvents();
+    // checkUpcomingEvents();
+    disableRecurrenceFields();
+    frequencySelect.disabled = true; 
 }
 
 window.addEventListener('beforeunload', () => {
@@ -37,8 +45,9 @@ document.querySelector('.filter-group input[type=date]').addEventListener('chang
 document.getElementById('filter-category').addEventListener('change', showEvents);
 document.getElementById('sort-criteria').addEventListener('change', showEvents);
 document.getElementById('sort-order').addEventListener('change', showEvents);
+document.getElementById('filter-status').addEventListener('change',showEvents);
 document.querySelector('.clear-filters').addEventListener('click',clearFilter);
-
+recurrenceOptions.addEventListener('change', enableFrequencyField);
 setInterval(checkUpcomingEvents, 1* 1000); 
 
 function getStoredEvents() {
@@ -49,6 +58,44 @@ function getStoredEvents() {
 function saveEventsToLocalStorage(events) {
     localStorage.setItem('events', JSON.stringify(events));
 }
+
+function disableRecurrenceFields() {
+    recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.disabled = true;
+    });
+    repeatUntilContainer.querySelectorAll('input').forEach(input => {
+        input.disabled = true;
+    });
+}
+
+function enableRecurrenceFields() {
+    recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.disabled = false;
+    });
+    repeatUntilContainer.querySelectorAll('input').forEach(input => {
+        input.disabled = false;
+    });
+}
+
+function enableFrequencyField() {
+    if (document.getElementById('custom').checked) {
+        frequencySelect.disabled = false; 
+        frequencySelect.disabled = true; 
+    }
+}
+
+recurrenceCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+        enableRecurrenceFields();
+    } else {
+        disableRecurrenceFields();
+        frequencySelect.disabled = true; 
+        recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+        });
+        repeatUntilContainer.querySelector('input[type="date"]').value = ''; 
+    }
+});
 
 form.addEventListener('submit',(e)=>{
     e.preventDefault();
@@ -79,11 +126,14 @@ function addNewEvent()
             eventName, eventDate, eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category
         );
         events.push(...recurringEvents); 
+        alert('Events Added Successfully :)');
+
     } else {
         const newEvent = new Event(
             eventName, eventDate, eventTime, eventLocation, eventDescription, false, null, null, '', category
         );
         events.push(newEvent);
+        alert('Event Added Successfully :)');
     }
 
     saveEventsToLocalStorage(events);
@@ -92,16 +142,12 @@ function addNewEvent()
     clearFilter();
 }
 
-function getAllRecurringEvents(eventName, eventDate, eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category) {
+function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category) {
     const recurringEvents = [];
     console.log("creating reocuuring event");
     
     let currentDate = new Date(eventDate);
     let endDate = repeatUntil ? new Date(repeatUntil) : null;
-
-    console.log(endDate);
-    console.log(currentDate);
-    console.log(currentDate <= endDate);
     
     while (currentDate <= endDate) {
         console.log("new event created");
@@ -127,40 +173,44 @@ function getAllRecurringEvents(eventName, eventDate, eventTime, eventLocation, e
 }
 
 function validateForm(formData) {
-    
+
+    const eventDate = formData.get("event-date");
     const eventName = formData.get("event-name");
+    const eventTime = formData.get("event-time");
+    const eventDescription = formData.get("event-desrcp");
+    const eventLocation = formData.get("event-location");
+    const recurrenceCheckbox = formData.get("is-recurrence");
+    const repeatUntil = formData.get("repeat-until");
+        
     if (!eventName || eventName.trim() === "") {
         alert("Event Name is required.");
         return false;
     }
 
-    const eventDate = formData.get("event-date");
+   
     if (!eventDate) {
         alert("Event Date is required.");
         return false;
     }
 
-    
-    const eventTime = formData.get("event-time");
+
     if (!eventTime) {
         alert("Event Time is required.");
         return false;
     }
 
 
-    const eventLocation = formData.get("event-location");
     if (!eventLocation || eventLocation.trim() === "") {
         alert("Event Location is required.");
         return false;
     }
 
-    const eventDescription = formData.get("event-desrcp");
+    
     if (!eventDescription || eventDescription.trim() === "") {
         alert("Event Description is required.");
         return false;
     }
 
-    const recurrenceCheckbox = formData.get("is-recurrence");
     if (recurrenceCheckbox === "on") { 
         const recurrenceType = formData.get("recurrence");
         if (!recurrenceType) {
@@ -175,19 +225,15 @@ function validateForm(formData) {
                 return false;
             }
         }
-        const repeatUntil = formData.get("repeat-until");
+
         if (!repeatUntil) {
             alert("Please select a Repeat Until date.");
             return false;
         }
+            
     }
 
     return true;
-}
-
-function exportEvents(file)
-{
-    console.log("i am in export event");
 }
 
 function showEvents()
@@ -217,6 +263,7 @@ function showEvents()
             <p class="event-location"><i>${event.eventLocation}</i></p>
             <p class="event-description">${event.eventDescription}</p>
             <p class="event-description"><strong>category: </strong>${event.category}</p>
+            <p class="event-description"><strong>status: </strong><span class=" event-status">${event.status}</span></p>
             
             <div class="event-countdown">
                 <div class="time-remaining">
@@ -255,6 +302,7 @@ function convertTo12HourFormat(time) {
 
 function startCountdown(event, eventCard) {
     const countdownElement = eventCard.querySelector('.time-remaining');
+    const eventStatusElement = eventCard.querySelector('.event-status');
 
     const eventDate = new Date(event.eventDate + " " + event.eventTime);  
     const eventTimestamp = eventDate.getTime();  
@@ -275,7 +323,9 @@ function startCountdown(event, eventCard) {
         
         if (timeleft < 0) {
             clearInterval(interval);
-            countdownElement.innerHTML = "Event Started!";
+            countdownElement.innerHTML = "Enjoy Your Event";
+            eventStatusElement.innerHTML = "ongoing";
+            event.status = "ongoing";
         }
     }, 1000); 
 }
@@ -449,47 +499,13 @@ function closeEvent()
     showEvents();
 }
 
-function filterEvents() {
-    const searchText = document.querySelector('.search-bar input').value.toLowerCase();
-    const startDate = document.querySelector('input[type="date"]:nth-child(1)').value;
-    const endDate = document.querySelector('input[type="date"]:nth-child(2)').value;
-    const category = document.getElementById('filter-category').value;
-    const sortCriteria = document.getElementById('sort-criteria').value;
-    const sortOrder = document.getElementById('sort-order').value;
-
-    let filteredEvents = events.filter(event => {
-        const eventDate = new Date(event.eventDate);
-        const eventNameMatch = event.eventName.toLowerCase().includes(searchText);
-        const eventDescriptionMatch = event.eventDescription.toLowerCase().includes(searchText);
-        const eventLocationMatch = event.eventLocation.toLowerCase().includes(searchText);
-        const dateMatch = (!startDate || eventDate >= new Date(startDate)) && (!endDate || eventDate <= new Date(endDate));
-        const categoryMatch = !category || event.category === category;
-
-        return (eventNameMatch || eventDescriptionMatch || eventLocationMatch) && dateMatch && categoryMatch;
-    });
-
-    filteredEvents.sort((a, b) => {
-        if (sortCriteria === 'date') {
-            return sortOrder === 'asc' 
-                ? new Date(a.eventDate) - new Date(b.eventDate)
-                : new Date(b.eventDate) - new Date(a.eventDate);
-        } else if (sortCriteria === 'name') {
-            return sortOrder === 'asc'
-                ? a.eventName.localeCompare(b.eventName)
-                : b.eventName.localeCompare(a.eventName);
-        }
-        return 0;
-    });
-
-    showEvents(filteredEvents);
-}
-
 function getFilterEvents() {
     const searchText = document.querySelector('.search-bar input').value.toLowerCase();
     const dateFilter = document.querySelector('.filter-group input[type=date]').value;
     const categoryFilter = document.getElementById('filter-category').value;
     const sortCriteria = document.getElementById('sort-criteria').value;
     const sortOrder = document.getElementById('sort-order').value;
+    const status = document.getElementById('filter-status').value; 
 
     let filteredEvents = events.filter(event => {
         const eventDate = new Date(event.eventDate);
@@ -498,8 +514,9 @@ function getFilterEvents() {
         const eventLocationMatch = event.eventLocation.toLowerCase().includes(searchText);
         const dateMatch = !dateFilter || eventDate.toISOString().split('T')[0] === dateFilter;
         const categoryMatch = !categoryFilter || event.category === categoryFilter;
+        const statusMatch = !status || event.status === status;
 
-        return (eventNameMatch || eventDescriptionMatch || eventLocationMatch) && dateMatch && categoryMatch;
+        return (eventNameMatch || eventDescriptionMatch || eventLocationMatch) && dateMatch && categoryMatch && statusMatch;
     });
 
     filteredEvents.sort((a, b) => {
@@ -528,6 +545,7 @@ function clearFilter()
     document.getElementById('filter-category').value = '';
     document.getElementById('sort-criteria').value = 'date';
     document.getElementById('sort-order').value = 'asc';
+    document.getElementById('filter-status').value = '';
     showEvents(); 
 }
 
@@ -547,19 +565,19 @@ function checkUpcomingEvents() {
             const minutesRemaining = Math.floor(timeDifference / (1000 * 60)); 
             console.log(`Minutes remaining: ${minutesRemaining}`); 
         
-        if (minutesRemaining <= 5 && !event.hasShown["5 minutes left"]) {
-            showNotification(event, "5 minutes left!");
-            event.hasShown["5 minutes left"] = true; 
+        if (minutesRemaining === 15 && !event.hasShown["15 minutes left"]) {
+            showNotification(event, "15 minutes left!");
+            event.hasShown["15 minutes left"] = true; 
         }
         
 
-        else if (minutesRemaining <= 30 && minutesRemaining > 5 && !event.hasShown["30 minutes left"]) {
+        else if (minutesRemaining === 30  && !event.hasShown["30 minutes left"]) {
             showNotification(event, "30 minutes left!");
             event.hasShown["30 minutes left"] = true; 
         }
         
 
-        else if (minutesRemaining <= 60 && minutesRemaining > 30 && !event.hasShown["1 hour left"]) {
+        else if (minutesRemaining === 60 && !event.hasShown["1 hour left"]) {
             showNotification(event, "1 hour left!");
             event.hasShown["1 hour left"] = true; 
         }
@@ -574,9 +592,15 @@ function checkUpcomingEvents() {
 }
 
 function showNotification(event, timeLeft) {
-    alert(`${event.eventName} is starting soon! ${timeLeft}\nLocation: ${event.eventLocation}\nDescription: ${event.eventDescription}`);
+    if(timeLeft==="Started :)")
+    {
+        alert(`${event.eventName} is ${timeLeft}\nLocation: ${event.eventLocation}\nDescription: ${event.eventDescription}`);
+    }
+    else
+    {
+        alert(`${event.eventName} is starting soon! ${timeLeft}\nLocation: ${event.eventLocation}\nDescription: ${event.eventDescription}`);
+    } 
 }
-
 
 function exportEventsToCSV() {
    
@@ -613,52 +637,3 @@ function exportEventsToCSV() {
     link.click(); 
 }
 
- const recurrenceCheckbox = document.getElementById('recurrence-checkbox');
- const recurrenceOptions = document.getElementById('recurrence-options');
- const repeatUntilContainer = document.getElementById('repeat-until-container');
- const eventForm = document.getElementById('event-form');
- const frequencySelect = document.getElementById('event-frequency');
- 
- 
- disableRecurrenceFields();
- frequencySelect.disabled = true; 
-
- function disableRecurrenceFields() {
-     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
-         radio.disabled = true;
-     });
-     repeatUntilContainer.querySelectorAll('input').forEach(input => {
-         input.disabled = true;
-     });
- }
-
- function enableRecurrenceFields() {
-     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
-         radio.disabled = false;
-     });
-     repeatUntilContainer.querySelectorAll('input').forEach(input => {
-         input.disabled = false;
-     });
- }
-
- function enableFrequencyField() {
-     if (document.getElementById('custom').checked) {
-         frequencySelect.disabled = false; 
-         frequencySelect.disabled = true; 
-     }
- }
-
- recurrenceCheckbox.addEventListener('change', function () {
-     if (this.checked) {
-         enableRecurrenceFields();
-     } else {
-         disableRecurrenceFields();
-         frequencySelect.disabled = true; 
-         recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
-             radio.checked = false;
-         });
-         repeatUntilContainer.querySelector('input[type="date"]').value = ''; 
-     }
- });
-
-  recurrenceOptions.addEventListener('change', enableFrequencyField);

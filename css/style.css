@@ -5,9 +5,7 @@
     list-style-type: none;
 }
 
-
 body{
-    /* background-color: white; */
     background-color: lightblue;
     color: black;
 }
@@ -32,7 +30,7 @@ a
     color: white;
     text-decoration: none;
 }
-.logo,.light-dark-mode{width: 50px;}
+.logo{width: 40px;}
 
 header ul{
     font-size: 18px;
@@ -40,37 +38,28 @@ header ul{
     gap:20px;
 }
 
-#theme-changed{cursor: pointer;}
-
 h1,h2{
     color: #000000;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------- End of Header------------------------- */
 
 
-/*------------------------------------------------------- main section---------------------------------------------- */
-
-/* -----------------------------------------------------------------Event Planner Section------------------------------------------------ */
-
+/*------------------------------------------------------- main section ----------------------------------------*/
 
 main {
     max-width: 95%;
     margin: 20px auto;
     font-size: 18px;
-    font-family: 'Arial', sans-serif;
-    /* background-color: #f4f4f9; */
-  
+    font-family: 'Arial', sans-serif; 
     color: #333;
 }
 
 /* Event Planner Section */
 #event-planner-section {
-    /* background-color: #fff; */
     background-color: yellowgreen;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 30px;
-    /* margin-bottom: 40px; */
 }
 
 .intro {
@@ -84,16 +73,14 @@ main {
     margin-bottom: 15px;
     text-transform: uppercase;
 }
-/*-------------------------------------------------------------------------------------------------- show --------event--------------------------------------------------------------------- */
+/*------------------------show event-------------------------------------------------------*/
 
 /* Show Event */
 #latest-added-events {
     margin-top: 20px;
     display: grid;
-
     place-items: center;
     padding: 20px;
-    /* background-color: #fff; */
     background-color: lightyellow;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -106,7 +93,6 @@ main {
     margin-bottom: 20px;
     font-weight: bold;
     letter-spacing: 0.5px;
-    /* text-transform: uppercase; */
 }
 
 .added-event-container {
@@ -135,7 +121,6 @@ main {
     box-shadow: 0 6px 15px rgba(173, 255, 47, 0.4), 0 8px 30px rgba(173, 255, 47, 0.3); 
 }
 
-
 .event-title {
     font-size: 20px;
     font-weight: bold;
@@ -161,13 +146,11 @@ main {
 }
 
 .event-countdown {
-    /* background-color: #f7f7f7; */
     background-color: lightblue;
     padding: 15px;
     border-radius: 8px;
     font-size: 14px;
     text-align: center;
-    /* text-align: left; */
     margin-bottom: 20px;
 }
 
@@ -198,8 +181,6 @@ main {
 }
 
 .action-btn {
-    /* background: none;
-    border: none; */
     cursor: pointer;
     padding: 8px 12px;
     border-radius: 5px;
@@ -239,16 +220,6 @@ main {
 /*--------------------------------------------------form section styling-------------------------------------------------- */
 .add-event-container,#event-filter-section
 {
-    /* background: rgb(250, 34, 34); */
-    /* border-radius: 8px;
-    width: 100%;
-    margin-top: 20px; */
-    
-    /* display: none; */
-    /* height: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
-    /* padding: 24px; */
-    /* background-color: #f9f9f9; */
     background-color: whitesmoke;
     padding: 10px 20px;
     border-radius: 8px;
@@ -274,11 +245,9 @@ main {
 {
     display: flex;
     align-items: center;
-    /* margin-bottom: 24px; */
     margin-bottom: 20px;
     padding: 8px;
     gap: 20px;
-    /* background-color: bisque; */
 }
 
 .input-title-img
@@ -425,7 +394,6 @@ textarea {
     display: flex;
     width: 100%;
     background-color: #333;
-    /* background-color: yellow; */
     justify-content: center;
     gap: 16px;
     padding: 10px;
@@ -448,8 +416,6 @@ textarea {
 
 .secondary-btn {
     background-color: red;
-    /* border-color: #e0e0e0; */
-    /* color: #333; */
     color: white;
 }
 
@@ -682,7 +648,6 @@ footer{
     }
     .form-left
     {
-        /* background-color: aqua; */
         border-right: none;
     }
 
