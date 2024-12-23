@@ -101,6 +101,7 @@ function showEvents()
         const event = events[i];
         const eventCard = document.createElement('div');
         eventCard.classList.add('event-card');
+        eventCard.id = `event-card-${i}`;
         
         const eventDetails = document.createElement('div');
         eventDetails.classList.add('event-details');
@@ -130,14 +131,14 @@ function showEvents()
         const actions = document.createElement('div');
         actions.classList.add('event-actions');
         actions.innerHTML = `
-            <button class="edit-btn action-btn"  onclick="updateEvent(${i})">✏️</button>
+            <button class="edit-btn action-btn"   onclick="openUpdateEventForm(${i})">✏️</button>
             <button class="delete-btn action-btn" onclick="deleteEvent(${i})">🗑️</button>
         `;
         
         eventCard.appendChild(eventDetails);
         eventCard.appendChild(actions);
         container.appendChild(eventCard);
-    
+        
         startCountdown(event, eventCard);
     }  
 }
@@ -190,3 +191,4 @@ function updateEvent(i)
 {
     
 }
+
