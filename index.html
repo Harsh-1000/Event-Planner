@@ -106,12 +106,6 @@
     
                                 <div class="form-grid">
                                     <div class="form-field">
-                                        <label for="event-repeat-date">Repeat Until</label>
-                                        <input type="date" 
-                                        id="event-repeat-date"
-                                        name="repeat-until">
-                                    </div>
-                                    <div class="form-field">
                                         <label for="event-frequency ">Frequency</label>
                                         <select name="event-frequency" id="event-frequency">
                                             <option value="">Select...</option>
@@ -121,6 +115,13 @@
                                             <option value="4">Every 4th time</option>
                                         </select>
                                     </div>
+                                    <div class="form-field">
+                                        <label for="event-repeat-date">Repeat Until</label>
+                                        <input type="date" 
+                                        id="event-repeat-date"
+                                        name="repeat-until">
+                                    </div>
+                                   
                                 </div>
     
                                 <div class="form-field">
@@ -132,8 +133,8 @@
                                         <option value="seminar">Seminar</option>
                                         <option value="webinar">Webinar</option>
                                         <option value="meetup">Meetup</option>
-                                        <option value="meetup">Party</option>
-                                        <option value="meetup">Other</option>
+                                        <option value="party">Party</option>
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
     
@@ -169,37 +170,24 @@
         
                         <div class="filters">
                             <div class="filter-group">
-                                <label>Start Date</label>
-                                <input type="date">
+                                <label for="filter-date">Date</label>
+                                <input type="date" id="filter-date">
                             </div>
-        
+    
                             <div class="filter-group">
-                                <label>End Date</label>
-                                <input type="date">
-                            </div>
-        
-                            <div class="filter-group">
-                                <label>Category</label>
-                                <select>
-                                    <option value="">All Categories</option>
-                                    <option>Music</option>
-                                    <option>Technology</option>
-                                    <option>Sports</option>
-                                    <option>Arts</option>
-                                    <option>Business</option>
+                                <label for="filter-category">Category</label>
+                                <select id="filter-category">
+                                    <option value="">All category</option>
+                                    <option value="conference">Conference</option>
+                                    <option value="workshop">Workshop</option>
+                                    <option value="seminar">Seminar</option>
+                                    <option value="webinar">Webinar</option>
+                                    <option value="meetup">Meetup</option>
+                                    <option value="party">Party</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
-        
-                            <div class="filter-group">
-                                <label>Status</label>
-                                <select>
-                                    <option value="">All Statuses</option>
-                                    <option>Upcoming</option>
-                                    <option>In Progress</option>
-                                    <option>Completed</option>
-                                    <option>Cancelled</option>
-                                </select>
-                            </div>
+    
                         </div>
     
                         <div class="sort-field">

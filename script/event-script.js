@@ -206,7 +206,6 @@ function openUpdateEventForm(i) {
     };
 }
 
-// -----------
 function updateEventForm(i, event) {
   const formContainer = document.createElement('form');
   formContainer.id = `event-form-${i}`;
