@@ -675,17 +675,13 @@ function updateEvent(id)
 {
     const eventIndex = events.findIndex(event => event.eventId === id);
 
-    const updatedEvent = {
-        eventName: document.getElementById(`event-name-${id}`).value,
-        eventDate: document.getElementById(`event-date-${id}`).value,
-        eventTime: document.getElementById(`event-time-${id}`).value,
-        eventLocation: document.getElementById(`event-location-${id}`).value,
-        eventDescription: document.getElementById(`event-desrcp-${id}`).value,
-        eventStatus:events[eventIndex].eventStatus,
-        category: document.getElementById(`event-category-${id}`).value,
-    };
+        events[eventIndex].eventName = document.getElementById(`event-name-${id}`).value,
+        events[eventIndex].eventDate = document.getElementById(`event-date-${id}`).value,
+        events[eventIndex].eventTime = document.getElementById(`event-time-${id}`).value,
+        events[eventIndex].eventLocation = document.getElementById(`event-location-${id}`).value,
+        events[eventIndex].eventDescription = document.getElementById(`event-desrcp-${id}`).value,
+        events[eventIndex].category = document.getElementById(`event-category-${id}`).value,
    
-    events[eventIndex] = updatedEvent;
     saveEventsToLocalStorage(events);
     showEvents();
     openFormId = null;
