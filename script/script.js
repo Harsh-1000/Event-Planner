@@ -87,7 +87,7 @@ const frequencySelect = document.getElementById('event-frequency');
 window.onload = ()=>{
     events = getStoredEvents();
     showEvents();
-    checkUpcomingEvents();
+    // checkUpcomingEvents();
     disableRecurrenceFields();
     frequencySelect.disabled = true; 
 }
@@ -147,7 +147,7 @@ recurrenceOptions.addEventListener('change', enableFrequencyField);
  * Sets up a periodic check every second (1000 milliseconds) to call the `checkUpcomingEvents` function.
  * This ensures that any upcoming events are checked continuously, and  notifications can be triggered accordingly.
  */
-setInterval(checkUpcomingEvents, 1 * 1000);
+// setInterval(checkUpcomingEvents, 1 * 1000);
 
 /**
  * Retrieves the stored events from localStorage.
@@ -398,14 +398,13 @@ function validateForm(formData) {
 /**
  * Displays the list of events in the event container.
  */
-function showEvents()
-{
-    container = document.getElementById('event-container');
+async function showEvents() {
+    const container = document.getElementById('event-container');
     container.innerHTML = '';
     
     let filteredEvents = getFilterEvents();
-    filteredEvents.forEach((event) => {
 
+    for (const event of filteredEvents) {
         const eventCard = document.createElement('div');
         eventCard.classList.add('event-card');
         eventCard.id = `event-card-${event.eventId}`;
@@ -416,7 +415,6 @@ function showEvents()
         const eventDate = new Date(event.eventDate);
         const formattedDate = eventDate.toLocaleDateString('en-GB'); 
 
-        // Format the event time (12-hour format with AM/PM)
         const formattedTime = convertTo12HourFormat(event.eventTime);
 
         eventDetails.innerHTML = `
@@ -447,10 +445,11 @@ function showEvents()
         eventCard.appendChild(eventDetails);
         eventCard.appendChild(actions);
         container.appendChild(eventCard);
-        
-        startCountdown(event, eventCard);
-    });
+
+        await startCountdown(event, eventCard);
+    }
 }
+
 
 /**
  * Converts a 24-hour time string to a 12-hour time format with AM/PM.
@@ -477,35 +476,40 @@ function convertTo12HourFormat(time) {
  * @param {Object} event
  * @param {HTMLElement} eventCard
  */
-function startCountdown(event, eventCard) {
+async function startCountdown(event, eventCard) {
+
     const countdownElement = eventCard.querySelector('.time-remaining');
     const eventStatusElement = eventCard.querySelector('.event-status');
     eventStatusElement.innerHTML = "upcoming";
     event.status = "upcoming";
     const eventDate = new Date(event.eventDate + " " + event.eventTime);  
     const eventTimestamp = eventDate.getTime();  
-    
-    const interval = setInterval(() => {
-        const now = new Date().getTime();  
-        const timeleft = eventTimestamp - now; 
 
-        const days = Math.floor(timeleft / (1000 * 60 * 60 * 24)); 
-        const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); 
-        const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60)); 
-        const seconds = Math.floor((timeleft % (1000 * 60)) / 1000); 
+    await new Promise((resolve) => {
+        const interval = setInterval(() => {
+            checkUpcomingEvent(event);
+            const now = new Date().getTime();  
+            const timeleft = eventTimestamp - now; 
 
-        countdownElement.querySelector('.days').textContent = days;
-        countdownElement.querySelector('.hours').textContent = hours;
-        countdownElement.querySelector('.minutes').textContent = minutes;
-        countdownElement.querySelector('.seconds').textContent = seconds;
-        
-        if (timeleft < 0) {
-            clearInterval(interval);
-            countdownElement.innerHTML = "Enjoy Your Event";
-            eventStatusElement.innerHTML = "ongoing";
-            event.status = "ongoing";
-        }
-    }, 1000); 
+            const days = Math.floor(timeleft / (1000 * 60 * 60 * 24)); 
+            const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); 
+            const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60)); 
+            const seconds = Math.floor((timeleft % (1000 * 60)) / 1000); 
+
+            countdownElement.querySelector('.days').textContent = days;
+            countdownElement.querySelector('.hours').textContent = hours;
+            countdownElement.querySelector('.minutes').textContent = minutes;
+            countdownElement.querySelector('.seconds').textContent = seconds;
+
+            if (timeleft < 0) {
+                clearInterval(interval);
+                countdownElement.innerHTML = "Enjoy Your Event";
+                eventStatusElement.innerHTML = "ongoing";
+                event.status = "ongoing";
+                resolve(); 
+            }
+        }, 1000);
+    });
 }
 
 /**
@@ -692,10 +696,7 @@ function updateEvent(id)
  */
 function closeEvent()
 {
-    // showEvents();
-    document.getElementById(`event-form-${openFormId}`).replaceWith(cloneNode);
-    openFormId = null;
-    cloneNode=null;
+    showEvents();
 }
 
 /**
@@ -759,22 +760,16 @@ function clearFilter()
  * Checks the upcoming events and shows notifications at specific time intervals (15 minutes, 30 minutes, 1 hour, and when the event starts).
  * 
  */
-function checkUpcomingEvents() {
+function checkUpcomingEvent(event) {
+    const eventDate = new Date(event.eventDate);
+    const eventTime = event.eventTime;
+    const eventStartTime = new Date(`${eventDate.toDateString()} ${eventTime}`);
     const currentTime = new Date();
-    events.forEach(event => {
-        const eventDate = new Date(event.eventDate);
-        const eventTime = event.eventTime;
-        const eventStartTime = new Date(`${eventDate.toDateString()} ${eventTime}`);
-
-        const timeDifference = eventStartTime - currentTime;
-        console.log(`Event: ${event.eventName}`);
-        console.log("Event start time: ", eventStartTime);
-        console.log("Time difference in ms: ", timeDifference); 
-
-        if (timeDifference > 0 && eventStartTime.toDateString() === currentTime.toDateString()) {
-            const minutesRemaining = Math.floor(timeDifference / (1000 * 60)); 
-            console.log(`Minutes remaining: ${minutesRemaining}`); 
-        
+    const timeDifference = eventStartTime - currentTime;
+    if (timeDifference > 0) {
+        const minutesRemaining = Math.floor(timeDifference / (1000 * 60)); 
+        console.log(`Minutes remaining: ${minutesRemaining}`); 
+    
         if (minutesRemaining === 15 && !event.hasShown["15 minutes left"]) {
             showNotification(event, "15 minutes left!");
             event.hasShown["15 minutes left"] = true; 
@@ -792,13 +787,12 @@ function checkUpcomingEvents() {
             event.hasShown["1 hour left"] = true; 
         }
 
-        if (Math.abs(timeDifference) <= 1000 && !event.hasShown["Started :)"]) {
+        else if (Math.abs(timeDifference) <= 1000 && !event.hasShown["Started :)"]) {
             showNotification(event, "Started :)");
             event.hasShown["Started :)"] = true; 
         
         }
-    }
-    });
+    }            
 }
 
 /**
@@ -853,3 +847,5 @@ function exportEventsToCSV() {
     link.click(); 
 }
 
+
+  
