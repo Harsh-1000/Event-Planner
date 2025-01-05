@@ -217,6 +217,11 @@ form.addEventListener('submit',(e)=>{
 
 });
 
+form.addEventListener('reset',() => {
+    disableRecurrenceFields();
+    enableFrequencyField();
+});
+
 /**
  * Adds a new event to the list of events.
  * This function collects form data, validates the input, and creates either a single event
@@ -244,7 +249,7 @@ function addNewEvent()
     
      if (isRecurring) {
         const recurringEvents = getAllRecurringEvents(
-            eventName, eventDate, eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category
+            eventName, eventDate, eventTime, eventLocation, eventDescription,recurrenceType, repeatUntil, frequency, category
         );
         events.push(...recurringEvents); 
         alert('Events Added Successfully :)');
@@ -278,7 +283,7 @@ function addNewEvent()
  * 
  * @returns {Array} An array of Event objects 
  */
-function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, eventDescription, recurrenceType, repeatUntil, frequency, category) {
+function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, eventDescription,recurrenceType, repeatUntil, frequency, category) {
     const recurringEvents = [];
     console.log("creating reocuuring event");
     
@@ -605,7 +610,6 @@ function startCountdown(event, eventCard) {
                 countdownElement.innerHTML = "Enjoy Your Event";
                 eventStatusElement.innerHTML = "ongoing";
                 event.status = "ongoing";
-                resolve(); 
             }
         }, 1000);
 
@@ -753,10 +757,10 @@ function exportEventsToCSV() {
             event.eventTime,
             event.eventLocation,
             event.eventDescription,
-            event.isRecurring, 
-            event.recurrenceType || '',
-            event.repeatUntil || '',
-            event.frequency || '',
+            event.eventRecurring ? 'Yes' : 'No', 
+            event.recurrenceType || 'none',
+            event.repeatUntil || 'none',
+            event.frequency || 'none',
             event.category,
             event.status
         ];
