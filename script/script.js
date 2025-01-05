@@ -45,6 +45,7 @@ const form = document.getElementById('event-form');
  */
 var events = [];
 
+var editEventId = null;
 /**
  * The checkbox element for toggling whether the event is recurring or not.
  */
@@ -441,6 +442,12 @@ function showEvents() {
 }
 
 function editEvent(eventId) {
+
+    if(editEventId){
+        displayEvent(editEventId);  
+    }
+
+    editEventId = eventId;
     const eventCard = document.getElementById(`event-card-${eventId}`);
     const eventDetails = eventCard.querySelector('.event-details');
     const event = getEventById(eventId); 
@@ -549,6 +556,7 @@ function displayEvent(eventId) {
         </div>
     </div>
 `;
+ editEventId = null;
  startCountdown(event, eventCard);
 }
 
