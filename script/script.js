@@ -22,6 +22,7 @@ function Event(eventName, eventDate, eventTime,eventLocation, eventDescription, 
     this.eventDescription = eventDescription || ''; 
     this.eventRecurring = eventRecurring || false; 
     this.recurrenceType = recurrenceType || null; 
+    this.isNextEventRecurred = false;
     this.repeatUntil = repeatUntil || ''; 
     this.frequency = frequency || ''; 
     this.category = category || ''; 
@@ -247,22 +248,13 @@ function addNewEvent()
     const repeatUntil = isRecurring ? formData.get('repeat-until') : null ;
     const frequency = isRecurring && recurrenceType === 'custom' ? formData.get('event-frequency') : '';
     const category = formData.get('event-category');
-    
-     if (isRecurring) {
-        const recurringEvents = getAllRecurringEvents(
-            eventName, eventDate, eventTime, eventLocation, eventDescription,recurrenceType, repeatUntil, frequency, category
-        );
-        events.push(...recurringEvents); 
-        alert('Events Added Successfully :)');
 
-    } else {
-        const newEvent = new Event(
-            eventName, eventDate, eventTime, eventLocation, eventDescription, false, null, null, '', category
-        );
-        events.push(newEvent);
-        alert('Event Added Successfully :)');
-    }
+    const newEvent = new Event(
+        eventName, eventDate, eventTime, eventLocation, eventDescription,isRecurring, recurrenceType, repeatUntil, frequency, category
+    );
 
+    events.push(newEvent);
+    alert('Event Added Successfully :)');
     form.reset();
     clearFilter();
 }
@@ -284,34 +276,34 @@ function addNewEvent()
  * 
  * @returns {Array} An array of Event objects 
  */
-function getAllRecurringEvents(eventName, eventDate,eventTime, eventLocation, eventDescription,recurrenceType, repeatUntil, frequency, category) {
-    const recurringEvents = [];
-    console.log("creating reocuuring event");
+function createNextRecurringEvent(event) {
     
-    let currentDate = new Date(eventDate);
-    let endDate = repeatUntil ? new Date(repeatUntil) : null;
-    
-    while (currentDate <= endDate) {
-        console.log("new event created");
-        
-        const newEvent = new Event(
-            eventName, currentDate.toISOString().split('T')[0], eventTime, eventLocation, eventDescription, true, recurrenceType, repeatUntil, frequency, category
-        );
-        recurringEvents.push(newEvent);
+    let currentDate = new Date(event.eventDate);
+    let endDate = new Date(event.repeatUntil);
 
-        if (recurrenceType === 'daily') {
-            currentDate.setDate(currentDate.getDate() + 1);
-        } else if (recurrenceType === 'weekly') {
-            currentDate.setDate(currentDate.getDate() + 7);
-        } else if (recurrenceType === 'monthly') {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-        } else if (recurrenceType === 'custom') {
-            const repeatFrequency = parseInt(frequency);
-            currentDate.setDate(currentDate.getDate() + (repeatFrequency * 1)); 
-        }
+    if(currentDate>=endDate)
+        return;
+
+    console.log("new event created");
+
+    if (event.recurrenceType === 'daily') {
+        currentDate.setDate(currentDate.getDate() + 1);
+    } else if (event.recurrenceType === 'weekly') {
+        currentDate.setDate(currentDate.getDate() + 7);
+    } else if (event.recurrenceType === 'monthly') {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+    } else if (event.recurrenceType === 'custom') {
+        const repeatFrequency = parseInt(event.frequency);
+        currentDate.setDate(currentDate.getDate() + (repeatFrequency * 1)); 
     }
-
-    return recurringEvents;
+        
+    const newEvent = new Event(
+            event.eventName, currentDate.toISOString().split('T')[0], event.eventTime, event.eventLocation, event.eventDescription, true, event.recurrenceType, event.repeatUntil, event.frequency, event.category
+        );
+    
+    events.push(newEvent);
+    addEventToDisplay(newEvent);
+    
 }
 
 /**
@@ -396,49 +388,55 @@ function showEvents() {
     let filteredEvents = getFilterEvents();
     
     for (const event of filteredEvents) {
-        const eventCard = document.createElement('div');
-        eventCard.classList.add('event-card');
-        eventCard.id = `event-card-${event.eventId}`;
-
-        const eventDetails = document.createElement('div');
-        eventDetails.classList.add('event-details');
-
-        const eventDate = new Date(event.eventDate);
-        const formattedDate = eventDate.toLocaleDateString('en-GB'); 
-
-        const formattedTime = convertTo12HourFormat(event.eventTime);
-
-             eventDetails.innerHTML = `
-            <h3 class="event-title">${event.eventName}</h3>
-            <p class="event-date">${formattedDate} ${formattedTime}</p>
-            <p class="event-location"><strong>${event.eventLocation}</strong></p>
-            <p class="event-description"><strong>description: </strong>${event.eventDescription}</p>
-            <p class="event-description"><strong>category: </strong>${event.category}</p>
-            <p class="event-description"><strong>status: </strong><span class="event-status">${event.status}</span></p>
-            
-            <div class="event-countdown">
-                <div class="time-remaining">
-                  &#x1F552; <span class="days">0</span> days
-                  <span class="hours">0</span> hrs
-                  <span class="minutes">0</span> min
-                  <span class="seconds">0</span> sec
-                </div>
-            </div>
-        `;
-
-        const actions = document.createElement('div');
-        actions.classList.add('event-actions');
-        actions.innerHTML = `
-            <button class="edit-btn action-btn" onclick="editEvent(${event.eventId})">✏️ Edit</button>
-            <button class="delete-btn action-btn" onclick="deleteEvent(${event.eventId})">🗑️ Delete</button>
-        `;
-
-        eventCard.appendChild(eventDetails);
-        eventCard.appendChild(actions);
-        container.appendChild(eventCard);
-
-        startCountdown(event, eventCard);
+        addEventToDisplay(event);
     }
+}
+
+function addEventToDisplay(event)
+{
+    const container = document.getElementById('event-container');
+    const eventCard = document.createElement('div');
+    eventCard.classList.add('event-card');
+    eventCard.id = `event-card-${event.eventId}`;
+
+    const eventDetails = document.createElement('div');
+    eventDetails.classList.add('event-details');
+
+    const eventDate = new Date(event.eventDate);
+    const formattedDate = eventDate.toLocaleDateString('en-GB'); 
+
+    const formattedTime = convertTo12HourFormat(event.eventTime);
+
+         eventDetails.innerHTML = `
+        <h3 class="event-title">${event.eventName}</h3>
+        <p class="event-date">${formattedDate} ${formattedTime}</p>
+        <p class="event-location"><strong>${event.eventLocation}</strong></p>
+        <p class="event-description"><strong>description: </strong>${event.eventDescription}</p>
+        <p class="event-description"><strong>category: </strong>${event.category}</p>
+        <p class="event-description"><strong>status: </strong><span class="event-status">${event.status}</span></p>
+        
+        <div class="event-countdown">
+            <div class="time-remaining">
+              &#x1F552; <span class="days">0</span> days
+              <span class="hours">0</span> hrs
+              <span class="minutes">0</span> min
+              <span class="seconds">0</span> sec
+            </div>
+        </div>
+    `;
+
+    const actions = document.createElement('div');
+    actions.classList.add('event-actions');
+    actions.innerHTML = `
+        <button class="edit-btn action-btn" onclick="editEvent(${event.eventId})">✏️ Edit</button>
+        <button class="delete-btn action-btn" onclick="deleteEvent(${event.eventId})">🗑️ Delete</button>
+    `;
+
+    eventCard.appendChild(eventDetails);
+    eventCard.appendChild(actions);
+    container.appendChild(eventCard);
+
+    startCountdown(event, eventCard);
 }
 
 function editEvent(eventId) {
@@ -597,30 +595,32 @@ function startCountdown(event, eventCard) {
     const eventDate = new Date(event.eventDate + " " + event.eventTime);  
     const eventTimestamp = eventDate.getTime();  
 
-    
-        const interval = setInterval(() => {
-            checkUpcomingEvent(event);
-            const now = new Date().getTime();  
-            const timeleft = eventTimestamp - now; 
+    const interval = setInterval(() => {
+        checkUpcomingEvent(event);
+        const now = new Date().getTime();  
+        const timeleft = eventTimestamp - now; 
 
-            const days = Math.floor(timeleft / (1000 * 60 * 60 * 24)); 
-            const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); 
-            const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60)); 
-            const seconds = Math.floor((timeleft % (1000 * 60)) / 1000); 
+        const days = Math.floor(timeleft / (1000 * 60 * 60 * 24)); 
+        const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); 
+        const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60)); 
+        const seconds = Math.floor((timeleft % (1000 * 60)) / 1000); 
 
-            countdownElement.querySelector('.days').textContent = days;
-            countdownElement.querySelector('.hours').textContent = hours;
-            countdownElement.querySelector('.minutes').textContent = minutes;
-            countdownElement.querySelector('.seconds').textContent = seconds;
+        countdownElement.querySelector('.days').textContent = days;
+        countdownElement.querySelector('.hours').textContent = hours;
+        countdownElement.querySelector('.minutes').textContent = minutes;
+        countdownElement.querySelector('.seconds').textContent = seconds;
 
-            if (timeleft < 0) {
-                clearInterval(interval);
-                countdownElement.innerHTML = "Enjoy Your Event";
-                eventStatusElement.innerHTML = "ongoing";
-                event.status = "ongoing";
+        if (timeleft < 0) {
+            clearInterval(interval);
+            countdownElement.innerHTML = "Enjoy Your Event";
+            eventStatusElement.innerHTML = "ongoing";
+            event.status = "ongoing";
+            if(event.eventRecurring && !event.isNextEventRecurred){
+                event.isNextEventRecurred = true;
+                createNextRecurringEvent(event);
             }
-        }, 1000);
-
+        }
+    }, 1000);
 }
 
 /**
