@@ -46,16 +46,6 @@ const form = document.getElementById('event-form');
 var events = [];
 
 /**
- * Holds the ID of the form that is currently open for editing. 
- */
-var openFormId = null;
-
-/**
- * A clone of the event which is updated.
- */
-var cloneNode = null;
-
-/**
  * The checkbox element for toggling whether the event is recurring or not.
  */
 const recurrenceCheckbox = document.getElementById('recurrence-checkbox');
@@ -87,7 +77,6 @@ const frequencySelect = document.getElementById('event-frequency');
 window.onload = ()=>{
     events = getStoredEvents();
     showEvents();
-    // checkUpcomingEvents();
     disableRecurrenceFields();
     frequencySelect.disabled = true; 
 }
@@ -143,11 +132,6 @@ document.querySelector('.clear-filters').addEventListener('click', clearFilter);
  */
 recurrenceOptions.addEventListener('change', enableFrequencyField);
 
-/**
- * Sets up a periodic check every second (1000 milliseconds) to call the `checkUpcomingEvents` function.
- * This ensures that any upcoming events are checked continuously, and  notifications can be triggered accordingly.
- */
-// setInterval(checkUpcomingEvents, 1 * 1000);
 
 /**
  * Retrieves the stored events from localStorage.
@@ -172,8 +156,10 @@ function saveEventsToLocalStorage(events) {
 function disableRecurrenceFields() {
     recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.disabled = true;
+        radio.checked = false;
     });
     document.getElementById('event-repeat-date').disabled = true;
+    document.getElementById('event-repeat-date').value = '';
 }
 
 /**
@@ -198,6 +184,7 @@ function enableFrequencyField() {
     else
     {
          frequencySelect.disabled = true; 
+         frequencySelect.value="";
     }
 }
 
@@ -213,10 +200,7 @@ recurrenceCheckbox.addEventListener('change', function () {
         enableRecurrenceFields();
     } else {
         disableRecurrenceFields();
-        recurrenceOptions.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.checked = false;
-        });
-        document.getElementById('event-repeat-date').value = '';
+        enableFrequencyField();
     }
 });
 
@@ -228,6 +212,9 @@ recurrenceCheckbox.addEventListener('change', function () {
 form.addEventListener('submit',(e)=>{
     e.preventDefault();
     addNewEvent();
+    disableRecurrenceFields();
+    enableFrequencyField();
+
 });
 
 /**
@@ -269,8 +256,6 @@ function addNewEvent()
         events.push(newEvent);
         alert('Event Added Successfully :)');
     }
-
-    saveEventsToLocalStorage(events);
 
     form.reset();
     clearFilter();
@@ -398,17 +383,17 @@ function validateForm(formData) {
 /**
  * Displays the list of events in the event container.
  */
-async function showEvents() {
+function showEvents() {
     const container = document.getElementById('event-container');
     container.innerHTML = '';
-    
-    let filteredEvents = getFilterEvents();
 
+    let filteredEvents = getFilterEvents();
+    
     for (const event of filteredEvents) {
         const eventCard = document.createElement('div');
         eventCard.classList.add('event-card');
         eventCard.id = `event-card-${event.eventId}`;
-        
+
         const eventDetails = document.createElement('div');
         eventDetails.classList.add('event-details');
 
@@ -417,7 +402,7 @@ async function showEvents() {
 
         const formattedTime = convertTo12HourFormat(event.eventTime);
 
-        eventDetails.innerHTML = `
+             eventDetails.innerHTML = `
             <h3 class="event-title">${event.eventName}</h3>
             <p class="event-date">${formattedDate} ${formattedTime}</p>
             <p class="event-location"><strong>${event.eventLocation}</strong></p>
@@ -434,23 +419,137 @@ async function showEvents() {
                 </div>
             </div>
         `;
-        
+
         const actions = document.createElement('div');
         actions.classList.add('event-actions');
         actions.innerHTML = `
-            <button class="edit-btn action-btn"   onclick="openUpdateEventForm(${event.eventId})">✏️</button>
-            <button class="delete-btn action-btn" onclick="deleteEvent(${event.eventId})">🗑️</button>
+            <button class="edit-btn action-btn" onclick="editEvent(${event.eventId})">✏️ Edit</button>
+            <button class="delete-btn action-btn" onclick="deleteEvent(${event.eventId})">🗑️ Delete</button>
         `;
-        
+
         eventCard.appendChild(eventDetails);
         eventCard.appendChild(actions);
         container.appendChild(eventCard);
 
-        await startCountdown(event, eventCard);
+        startCountdown(event, eventCard);
     }
 }
 
+function editEvent(eventId) {
+    const eventCard = document.getElementById(`event-card-${eventId}`);
+    const eventDetails = eventCard.querySelector('.event-details');
+    const event = getEventById(eventId); 
+    eventDetails.innerHTML = `
+        <div class="add-event-form form-left">
+            <div class="form-field">
+                <label for="event-name">Event Name</label>
+                <input type="text" id="event-name-${eventId}" value="${event.eventName}" required>
+            </div>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="event-date">Start Date</label>
+                    <input type="date" id="event-date-${eventId}" value="${new Date(event.eventDate).toISOString().split('T')[0]}" required>
+                </div>
+                <div class="form-field">
+                    <label for="event-time">Start Time</label>
+                    <input type="time" id="event-time-${eventId}" value="${event.eventTime}" required>
+                </div>
+            </div>
+            <div class="form-field">
+                <label for="event-location">Location</label>
+                <input type="text" id="event-location-${eventId}" value="${event.eventLocation}" required>
+            </div>
+            <div class="form-field">
+                <label for="event-description">Description</label>
+                <textarea id="event-description-${eventId}" required>${event.eventDescription}</textarea>
+            </div>
+            <div class="form-field">
+                <label for="event-category">Category</label>
+                <select id="event-category-${eventId}" required>
+                    <option value="conference" ${event.category === "conference" ? "selected" : ""}>Conference</option>
+                    <option value="workshop" ${event.category === "workshop" ? "selected" : ""}>Workshop</option>
+                    <option value="seminar" ${event.category === "seminar" ? "selected" : ""}>Seminar</option>
+                    <option value="webinar" ${event.category === "webinar" ? "selected" : ""}>Webinar</option>
+                    <option value="meetup" ${event.category === "meetup" ? "selected" : ""}>Meetup</option>
+                    <option value="party" ${event.category === "party" ? "selected" : ""}>Party</option>
+                    <option value="other" ${event.category === "other" ? "selected" : ""}>Other</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="form-btn primary-btn" onclick="saveEventChanges(${eventId})"> Save Event</button>
+                <button type="button" class="form-btn secondary-btn" onclick="displayEvent(${eventId})">Close</button>
+            </div>
+        </div>
+       
+    `;
+}
 
+function saveEventChanges(eventId) {
+    
+    const eventCard = document.getElementById(`event-card-${eventId}`);
+
+    const eventData = {
+        "event-date": document.getElementById(`event-date-${eventId}`).value,
+        "event-name": document.getElementById(`event-name-${eventId}`).value.trim(),
+        "event-time": document.getElementById(`event-time-${eventId}`).value,
+        "event-location": document.getElementById(`event-location-${eventId}`).value.trim(),
+        "event-desrcp": document.getElementById(`event-description-${eventId}`).value.trim(),
+        "event-category" : document.getElementById(`event-category-${eventId}`).value
+    };
+
+    const formData = new Map(Object.entries(eventData));
+
+    if (!validateForm(formData)) {
+        return; 
+    }
+
+    const eventIndex = events.findIndex(event => event.eventId === eventId);
+
+    events[eventIndex] = {
+        ...events[eventIndex], 
+        eventName: eventData["event-name"],
+        eventDate: eventData["event-date"],
+        eventTime: eventData["event-time"],
+        eventLocation: eventData["event-location"],
+        eventDescription: eventData["event-desrcp"],
+        category: document.getElementById(`event-category-${eventId}`).value,
+    };
+    
+    displayEvent(eventId);
+}
+
+function displayEvent(eventId) {
+    const eventCard = document.getElementById(`event-card-${eventId}`);
+    const eventDetails = eventCard.querySelector('.event-details');
+    const event = getEventById(eventId); 
+    const eventDate = new Date(event.eventDate);
+    const formattedDate = eventDate.toLocaleDateString('en-GB'); 
+
+    const formattedTime = convertTo12HourFormat(event.eventTime);
+
+    eventDetails.innerHTML = `
+    <h3 class="event-title">${event.eventName}</h3>
+    <p class="event-date">${formattedDate} ${formattedTime}</p>
+    <p class="event-location"><strong>${event.eventLocation}</strong></p>
+    <p class="event-description"><strong>description: </strong>${event.eventDescription}</p>
+    <p class="event-description"><strong>category: </strong>${event.category}</p>
+    <p class="event-description"><strong>status: </strong><span class="event-status">${event.status}</span></p>
+    
+    <div class="event-countdown">
+        <div class="time-remaining">
+          &#x1F552; <span class="days">0</span> days
+          <span class="hours">0</span> hrs
+          <span class="minutes">0</span> min
+          <span class="seconds">0</span> sec
+        </div>
+    </div>
+`;
+ startCountdown(event, eventCard);
+}
+
+function getEventById(eventId) {
+    return getFilterEvents().find(event => event.eventId === eventId); 
+}
 /**
  * Converts a 24-hour time string to a 12-hour time format with AM/PM.
  * 
@@ -476,7 +575,7 @@ function convertTo12HourFormat(time) {
  * @param {Object} event
  * @param {HTMLElement} eventCard
  */
-async function startCountdown(event, eventCard) {
+function startCountdown(event, eventCard) {
 
     const countdownElement = eventCard.querySelector('.time-remaining');
     const eventStatusElement = eventCard.querySelector('.event-status');
@@ -485,7 +584,7 @@ async function startCountdown(event, eventCard) {
     const eventDate = new Date(event.eventDate + " " + event.eventTime);  
     const eventTimestamp = eventDate.getTime();  
 
-    await new Promise((resolve) => {
+    
         const interval = setInterval(() => {
             checkUpcomingEvent(event);
             const now = new Date().getTime();  
@@ -509,7 +608,7 @@ async function startCountdown(event, eventCard) {
                 resolve(); 
             }
         }, 1000);
-    });
+
 }
 
 /**
@@ -521,182 +620,9 @@ function deleteEvent(id)
 {
     const eventIndex = events.findIndex(event => event.eventId === id);
     events.splice(eventIndex,1);
-    saveEventsToLocalStorage(events);
-    showEvents();
-}
-
-/**
- * Create and returns a form to update the details of an existing event.
- * The form is pre-populated with the current values of the event and includes options 
- * @returns {HTMLElement} The form element that can be used for updating the event.
- */
-function updateEventForm(i, event) {
-  const formContainer = document.createElement('form');
-  formContainer.id = `event-form-${i}`;
-
-  formContainer.innerHTML = `
-  <div class="add-event-container">
-        <div class="form-container">
-          <div class="add-event-form form-left">
-              <div class="form-header">
-                  <img src="./img/add-event.png" alt="+" class="input-title-img">
-                  <h2 class="card-title">Update Event</h2>
-              </div>
-          
-              <div class="form-field">
-                  <label for="event-name-${i}">Event Name</label>
-                  <input type="text" name="event-name-${i}" id="event-name-${i}" placeholder="Enter Event Name" value="${event.eventName}">
-              </div>
-              <div class="form-grid">
-                  <div class="form-field">
-                      <label for="event-date-${i}">Date</label>
-                      <input type="date" id="event-date-${i}" name="event-date-${i}" value="${event.eventDate}">
-                  </div>
-  
-                  <div class="form-field">
-                      <label for="event-time-${i}">Time</label>
-                      <input type="time" id="event-time-${i}" name="event-time-${i}" value="${event.eventTime}">
-                  </div>
-              </div>
-  
-              <div class="form-field">
-                  <label for="event-location-${i}">Location</label>
-                  <input type="text" id="event-location-${i}" name="event-location-${i}" placeholder="Enter location" value="${event.eventLocation}">
-              </div>
-  
-              <div class="form-field">
-                  <label for="event-desrcp-${i}">Description</label>
-                  <textarea name="event-desrcp-${i}" id="event-desrcp-${i}" placeholder="Enter event description">${event.eventDescription}</textarea>
-              </div>        
-          </div>
-  
-          <div class="add-event-form form-right">
-    <div class="form-header">
-        <img src="./img/recurrent.png" alt="recurrence" class="input-title-img">
-        <h3 for="event-recur-${i}">Recurring Event</h3>
-        <label class="switch">
-            <input id="is-recurrence-${i}" 
-            class ="recurrence-checkbox" disabled  name="is-recurrence-${i}" type="checkbox" ${event.isRecurrence ? 'checked' : ''}>
-            <span class="slider round"></span>
-        </label>
-    </div>
-
-    <div class="radio-field">
-        <div class="radio-item">
-            <input disabled type="radio" id="daily-${i}" name="recurrence-${i}" value="daily" ${event.recurrenceType === 'daily' ? 'checked' : ''}>
-            <label for="daily-${i}">Daily</label>
-        </div>
-        <div class="radio-item">
-            <input disabled type="radio" id="weekly-${i}" name="recurrence-${i}" value="weekly" ${event.recurrenceType === 'weekly' ? 'checked' : ''}>
-            <label for="weekly-${i}">Weekly</label>
-        </div>
-        <div class="radio-item">
-            <input disabled type="radio" id="monthly-${i}" name="recurrence-${i}" value="monthly" ${event.recurrenceType === 'monthly' ? 'checked' : ''}>
-            <label for="monthly-${i}">Monthly</label>
-        </div>
-        <div class="radio-item">
-            <input disabled type="radio" id="custom-${i}" name="recurrence-${i}" value="custom" ${event.recurrenceType === 'custom' ? 'checked' : ''}>
-            <label for="custom-${i}">Custom</label>
-        </div>
-    </div>
-
-    <div class="form-grid" id="repeat-until-container">
-      
-        <div class="form-field">
-            <label for="event-frequency-${i}">Frequency</label>
-            <select name="event-frequency-${i}" id="event-frequency-${i}" disabled>
-                <option value="">Select...</option>
-                <option value="1" ${event.frequency === 1 ? 'selected' : ''}>Every time</option>
-                <option value="2" ${event.frequency === 2 ? 'selected' : ''}>Every 2nd time</option>
-                <option value="3" ${event.frequency === 3 ? 'selected' : ''}>Every 3rd time</option>
-                <option value="4" ${event.frequency === 4 ? 'selected' : ''}>Every 4th time</option>
-            </select>
-        </div>
-          <div class="form-field">
-            <label for="event-repeat-date-${i}">Repeat Until</label>
-            <input type="date" id="event-repeat-date-${i}" disabled name="repeat-until-${i}" value="${event.repeatUntil}">
-        </div>
-    </div>
-
-    <div class="form-field">
-        <label for="event-category-${i}">Category</label>
-        <select id="event-category-${i}" name="event-category-${i}">
-            <option value="">Select a category</option>
-            <option value="conference" ${event.category === 'conference' ? 'selected' : ''}>Conference</option>
-            <option value="workshop" ${event.category === 'workshop' ? 'selected' : ''}>Workshop</option>
-            <option value="seminar" ${event.category === 'seminar' ? 'selected' : ''}>Seminar</option>
-            <option value="webinar" ${event.category === 'webinar' ? 'selected' : ''}>Webinar</option>
-            <option value="meetup" ${event.category === 'meetup' ? 'selected' : ''}>Meetup</option>
-            <option value="party" ${event.category === 'party' ? 'selected' : ''}>Party</option>
-            <option value="other" ${event.category === 'other' ? 'selected' : ''}>Other</option>
-        </select>
-    </div>
-</div>
-      </div>
-      <div class="btn-container">
-          <button type="submit" class="form-btn primary-btn" onclick="updateEvent(${i})" >Save Event</button>
-          <button type="reset" class="form-btn secondary-btn" onclick="closeEvent()">Close Form</button>
-      </div>
-      </div>
-  `;
-
-  return formContainer;
-}
-
-/**
- * Opens the form to update an existing event by replacing the event card with the update form.
- * If another form is already open, it closes the previous form.
- * 
- * @param {number} id - The ID of the event to be updated.
- */
-function openUpdateEventForm(id) {
-
-  if (openFormId !== null) {
-    document.getElementById(`event-form-${openFormId}`).replaceWith(cloneNode);
-    cloneNode=null;
-    openFormId=null;
-  }
-
-  const event = events.find(event => event.eventId === id);
-  const formContainer = updateEventForm(id, event);
-
-  const eventCard = document.getElementById(`event-card-${id}`);
-  cloneNode = eventCard.cloneNode(true);
-
-  eventCard.replaceWith(formContainer);
-
-  console.log(formContainer);
-  openFormId = id; 
-  console.log(openFormId);
-}
-
-/**
- * Updates an existing event with the new values from the event update form.
- * The updated event information is saved to localStorage.
- * @param {number} id - The ID of the event to be updated.
- */
-function updateEvent(id)
-{
-    const eventIndex = events.findIndex(event => event.eventId === id);
-
-        events[eventIndex].eventName = document.getElementById(`event-name-${id}`).value,
-        events[eventIndex].eventDate = document.getElementById(`event-date-${id}`).value,
-        events[eventIndex].eventTime = document.getElementById(`event-time-${id}`).value,
-        events[eventIndex].eventLocation = document.getElementById(`event-location-${id}`).value,
-        events[eventIndex].eventDescription = document.getElementById(`event-desrcp-${id}`).value,
-        events[eventIndex].category = document.getElementById(`event-category-${id}`).value,
-   
-    saveEventsToLocalStorage(events);
-    showEvents();
-    openFormId = null;
-}
-
-/**
- * Closes the current event update form and restores the previously displayed event card.
- */
-function closeEvent()
-{
-    showEvents();
+    const eventCard = document.getElementById(`event-card-${id}`);
+    const container = document.getElementById('event-container');
+    container.removeChild(eventCard);
 }
 
 /**
